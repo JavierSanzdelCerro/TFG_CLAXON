@@ -34,3 +34,6 @@ node_modules/
 google-services.json
 GoogleService-Info.plist
 *-firebase-adminsdk-*.json
+
+# Archivos temporales de los vídeos
+docs/videos/fuente/.tmp/
