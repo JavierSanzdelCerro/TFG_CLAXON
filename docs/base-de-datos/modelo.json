@@ -1,0 +1,4305 @@
+{
+ "tablas": [
+  {
+   "nombre": "provincia",
+   "comentario": "Provincias donde opera Claxon (el piloto empieza en Teruel).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(60)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(60)"
+    },
+    {
+     "nombre": "codigo_ine",
+     "tipo": "character(2)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "char(2)"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 1,
+   "bloque": "territorio"
+  },
+  {
+   "nombre": "comarca",
+   "comentario": "Comarcas (en Aragón agrupan servicios entre pueblos cercanos).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "provincia_id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "provincia",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(80)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(80)"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_comarca_nombre",
+     "definicion": "UNIQUE (provincia_id, nombre)"
+    }
+   ],
+   "filas_demo": 1,
+   "bloque": "territorio"
+  },
+  {
+   "nombre": "municipio",
+   "comentario": "Pueblos dados de alta en Claxon.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "provincia_id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "provincia",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "comarca_id",
+     "tipo": "smallint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "comarca",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(100)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(100)"
+    },
+    {
+     "nombre": "codigo_ine",
+     "tipo": "character(5)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "char(5)"
+    },
+    {
+     "nombre": "habitantes",
+     "tipo": "integer",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "latitud",
+     "tipo": "numeric(9,6)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(9,6)"
+    },
+    {
+     "nombre": "longitud",
+     "tipo": "numeric(9,6)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(9,6)"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": "FALSE si el pueblo deja de usar Claxon (no se borra para conservar el histórico).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "municipio_habitantes_check",
+     "definicion": "CHECK ((habitantes >= 0))"
+    },
+    {
+     "nombre": "municipio_latitud_check",
+     "definicion": "CHECK (((latitud >= ('-90'::integer)::numeric) AND (latitud <= (90)::numeric)))"
+    },
+    {
+     "nombre": "municipio_longitud_check",
+     "definicion": "CHECK (((longitud >= ('-180'::integer)::numeric) AND (longitud <= (180)::numeric)))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_municipio_nombre",
+     "definicion": "UNIQUE (provincia_id, nombre)"
+    }
+   ],
+   "filas_demo": 5,
+   "bloque": "territorio"
+  },
+  {
+   "nombre": "usuario",
+   "comentario": "Cuenta para entrar en la app o en el panel web. Un usuario puede tener varios roles.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "email",
+     "tipo": "character varying(150)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(150)"
+    },
+    {
+     "nombre": "telefono",
+     "tipo": "character varying(20)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Alternativa al email: muchas personas mayores no usan correo.",
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "password_hash",
+     "tipo": "character varying(100)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Hash BCrypt de la contraseña (nunca la contraseña en claro).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(100)"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(80)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(80)"
+    },
+    {
+     "nombre": "apellidos",
+     "tipo": "character varying(120)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "tamano_texto",
+     "tipo": "character varying(12)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'GRANDE'::character varying",
+     "comentario": "Preferencia de accesibilidad. Por defecto GRANDE.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    },
+    {
+     "nombre": "alto_contraste",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "idioma",
+     "tipo": "character varying(5)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'es'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(5)"
+    },
+    {
+     "nombre": "email_verificado",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "ultimo_acceso",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_baja",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_usuario_baja",
+     "definicion": "CHECK (((fecha_baja IS NULL) OR (activo = false)))"
+    },
+    {
+     "nombre": "ck_usuario_contacto",
+     "definicion": "CHECK (((email IS NOT NULL) OR (telefono IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_usuario_email",
+     "definicion": "CHECK (((email IS NULL) OR ((email)::text ~* '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'::text)))"
+    },
+    {
+     "nombre": "usuario_tamano_texto_check",
+     "definicion": "CHECK (((tamano_texto)::text = ANY ((ARRAY['NORMAL'::character varying, 'GRANDE'::character varying, 'MUY_GRANDE'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 11,
+   "bloque": "usuarios"
+  },
+  {
+   "nombre": "rol",
+   "comentario": "Perfiles de la aplicación. Se usan en Spring Security como ROLE_<codigo>.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "codigo",
+     "tipo": "character varying(20)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(40)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(40)"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "rol_codigo_check",
+     "definicion": "CHECK (((codigo)::text = ANY ((ARRAY['VECINO'::character varying, 'FAMILIAR'::character varying, 'VENDEDOR'::character varying, 'AYUNTAMIENTO'::character varying, 'ADMIN'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 5,
+   "bloque": "usuarios"
+  },
+  {
+   "nombre": "usuario_rol",
+   "comentario": "Relación N:M: un vendedor también puede ser vecino de su pueblo, por ejemplo.",
+   "columnas": [
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "rol_id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "rol",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "fecha_asignacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 12,
+   "bloque": "usuarios"
+  },
+  {
+   "nombre": "token_refresco",
+   "comentario": "Tokens de refresco del JWT. Permite cerrar sesión en un dispositivo concreto.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "token_hash",
+     "tipo": "character(64)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "SHA-256 del token en hexadecimal (64 caracteres).",
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "char(64)"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_expiracion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "revocado",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "agente_usuario",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_token_fechas",
+     "definicion": "CHECK ((fecha_expiracion > fecha_creacion))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 0,
+   "bloque": "usuarios"
+  },
+  {
+   "nombre": "dispositivo",
+   "comentario": "Móviles de cada usuario donde se envían las notificaciones push.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "token_push",
+     "tipo": "character varying(255)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Token de registro de Firebase Cloud Messaging.",
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(255)"
+    },
+    {
+     "nombre": "plataforma",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "modelo",
+     "tipo": "character varying(80)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(80)"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_registro",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "ultimo_uso",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "dispositivo_plataforma_check",
+     "definicion": "CHECK (((plataforma)::text = ANY ((ARRAY['ANDROID'::character varying, 'IOS'::character varying, 'WEB'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 7,
+   "bloque": "usuarios"
+  },
+  {
+   "nombre": "vecino",
+   "comentario": "Persona que vive en el pueblo. Puede NO tener cuenta: en ese caso la gestiona un familiar.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "NULL si el vecino no usa la app (lo gestiona un familiar).",
+     "pk": false,
+     "unico": true,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "n"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(80)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(80)"
+    },
+    {
+     "nombre": "apellidos",
+     "tipo": "character varying(120)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "telefono",
+     "tipo": "character varying(20)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "direccion",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "necesita_ayuda_entrega",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": "Movilidad reducida: el vendedor se lo acerca a casa si puede.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "notas_entrega",
+     "tipo": "character varying(300)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Indicaciones para el vendedor. Nunca datos de salud.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(300)"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 6,
+   "bloque": "vecinos"
+  },
+  {
+   "nombre": "familiar_vecino",
+   "comentario": "Familiares que ayudan a un vecino desde fuera del pueblo.",
+   "columnas": [
+    {
+     "nombre": "familiar_usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vecino_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "vecino",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "parentesco",
+     "tipo": "character varying(30)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(30)"
+    },
+    {
+     "nombre": "puede_hacer_encargos",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "recibe_avisos",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'PENDIENTE'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "codigo_invitacion",
+     "tipo": "character(6)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Código de 6 caracteres para vincularse sin compartir contraseñas.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "char(6)"
+    },
+    {
+     "nombre": "fecha_solicitud",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_respuesta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_familiar_respuesta",
+     "definicion": "CHECK ((((estado)::text = 'PENDIENTE'::text) OR (fecha_respuesta IS NOT NULL)))"
+    },
+    {
+     "nombre": "familiar_vecino_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['PENDIENTE'::character varying, 'ACEPTADA'::character varying, 'RECHAZADA'::character varying, 'REVOCADA'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 3,
+   "bloque": "vecinos"
+  },
+  {
+   "nombre": "categoria_servicio",
+   "comentario": "Tipos de servicio ambulante: pan, pescado, fruta, carne...",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "codigo",
+     "tipo": "character varying(20)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(40)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(40)"
+    },
+    {
+     "nombre": "icono",
+     "tipo": "character varying(40)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Nombre del icono en la app (p. ej. \"croissant\" de Lucide).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(40)"
+    },
+    {
+     "nombre": "color",
+     "tipo": "character(7)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "char(7)"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "categoria_servicio_color_check",
+     "definicion": "CHECK ((color ~ '^#[0-9A-Fa-f]{6}$'::text))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 7,
+   "bloque": "vendedores"
+  },
+  {
+   "nombre": "vendedor",
+   "comentario": "Negocio ambulante (panadería, pescadería...).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "nombre_comercial",
+     "tipo": "character varying(120)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "nif",
+     "tipo": "character varying(9)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(9)"
+    },
+    {
+     "nombre": "telefono_contacto",
+     "tipo": "character varying(20)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "character varying(400)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(400)"
+    },
+    {
+     "nombre": "municipio_base_id",
+     "tipo": "integer",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Pueblo desde el que sale el vendedor.",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "acepta_encargos",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "horas_antelacion_encargo",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "12",
+     "comentario": "Horas mínimas antes del reparto para aceptar un encargo.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "vendedor_horas_antelacion_encargo_check",
+     "definicion": "CHECK (((horas_antelacion_encargo >= 0) AND (horas_antelacion_encargo <= 72)))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 3,
+   "bloque": "vendedores"
+  },
+  {
+   "nombre": "vendedor_categoria",
+   "comentario": "Un vendedor puede ofrecer varias categorías (p. ej. pan y bollería, fruta y verdura).",
+   "columnas": [
+    {
+     "nombre": "vendedor_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "vendedor",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "categoria_id",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "categoria_servicio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 3,
+   "bloque": "vendedores"
+  },
+  {
+   "nombre": "producto",
+   "comentario": "Catálogo opcional del vendedor. Si no tiene, los encargos se hacen con texto libre.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vendedor_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vendedor",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "categoria_id",
+     "tipo": "smallint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "categoria_servicio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(100)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(100)"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "character varying(300)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(300)"
+    },
+    {
+     "nombre": "precio",
+     "tipo": "numeric(8,2)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Orientativo. NULL = \"según peso\" o \"consultar\".",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(8,2)"
+    },
+    {
+     "nombre": "unidad",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'UNIDAD'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "disponible",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "producto_precio_check",
+     "definicion": "CHECK ((precio >= (0)::numeric))"
+    },
+    {
+     "nombre": "producto_unidad_check",
+     "definicion": "CHECK (((unidad)::text = ANY ((ARRAY['UNIDAD'::character varying, 'KG'::character varying, 'GRAMOS'::character varying, 'DOCENA'::character varying, 'LITRO'::character varying, 'PAQUETE'::character varying, 'BANDEJA'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_producto_nombre",
+     "definicion": "UNIQUE (vendedor_id, nombre)"
+    }
+   ],
+   "filas_demo": 19,
+   "bloque": "vendedores"
+  },
+  {
+   "nombre": "ruta",
+   "comentario": "Plantilla de recorrido habitual de un vendedor (qué pueblos y en qué orden).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vendedor_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vendedor",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(100)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(100)"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "character varying(300)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(300)"
+    },
+    {
+     "nombre": "hora_salida_prevista",
+     "tipo": "time without time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "time"
+    },
+    {
+     "nombre": "activa",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_ruta_nombre",
+     "definicion": "UNIQUE (vendedor_id, nombre)"
+    }
+   ],
+   "filas_demo": 3,
+   "bloque": "rutas"
+  },
+  {
+   "nombre": "ruta_dia",
+   "comentario": "Días de la semana en que se hace la ruta.",
+   "columnas": [
+    {
+     "nombre": "ruta_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "ruta",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "dia_semana",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "ISO 8601: 1 = lunes ... 7 = domingo (igual que DayOfWeek de Java).",
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ruta_dia_dia_semana_check",
+     "definicion": "CHECK (((dia_semana >= 1) AND (dia_semana <= 7)))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 11,
+   "bloque": "rutas"
+  },
+  {
+   "nombre": "parada",
+   "comentario": "Punto donde para el vendedor en cada pueblo de la ruta.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "ruta_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "ruta",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "orden",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "punto_encuentro",
+     "tipo": "character varying(100)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'Plaza'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(100)"
+    },
+    {
+     "nombre": "minutos_desde_salida",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Base de la hora estimada: salida real + estos minutos (no hay GPS en tiempo real).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "duracion_estimada_min",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "10",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "latitud",
+     "tipo": "numeric(9,6)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(9,6)"
+    },
+    {
+     "nombre": "longitud",
+     "tipo": "numeric(9,6)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(9,6)"
+    },
+    {
+     "nombre": "activa",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "parada_duracion_estimada_min_check",
+     "definicion": "CHECK ((duracion_estimada_min > 0))"
+    },
+    {
+     "nombre": "parada_minutos_desde_salida_check",
+     "definicion": "CHECK ((minutos_desde_salida >= 0))"
+    },
+    {
+     "nombre": "parada_orden_check",
+     "definicion": "CHECK ((orden >= 1))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_parada_orden",
+     "definicion": "UNIQUE (ruta_id, orden) DEFERRABLE"
+    }
+   ],
+   "filas_demo": 11,
+   "bloque": "rutas"
+  },
+  {
+   "nombre": "jornada",
+   "comentario": "Una ruta en un día concreto. Se crea al pulsar «Iniciar ruta» o la genera una tarea programada.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "ruta_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "ruta",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "date",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "date"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(12)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'PROGRAMADA'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    },
+    {
+     "nombre": "hora_inicio_real",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "hora_fin_real",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "retraso_minutos",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "0",
+     "comentario": "Retraso que indica el vendedor durante el recorrido; desplaza todas las horas estimadas.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "motivo_cancelacion",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_jornada_cancelar",
+     "definicion": "CHECK ((((estado)::text <> 'CANCELADA'::text) OR (motivo_cancelacion IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_jornada_fin",
+     "definicion": "CHECK ((((estado)::text <> 'FINALIZADA'::text) OR (hora_fin_real IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_jornada_inicio",
+     "definicion": "CHECK ((((estado)::text <> ALL ((ARRAY['EN_CURSO'::character varying, 'FINALIZADA'::character varying])::text[])) OR (hora_inicio_real IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_jornada_orden",
+     "definicion": "CHECK (((hora_fin_real IS NULL) OR (hora_fin_real >= hora_inicio_real)))"
+    },
+    {
+     "nombre": "jornada_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['PROGRAMADA'::character varying, 'EN_CURSO'::character varying, 'FINALIZADA'::character varying, 'CANCELADA'::character varying])::text[])))"
+    },
+    {
+     "nombre": "jornada_retraso_minutos_check",
+     "definicion": "CHECK (((retraso_minutos >= '-120'::integer) AND (retraso_minutos <= 600)))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_jornada",
+     "definicion": "UNIQUE (ruta_id, fecha)"
+    }
+   ],
+   "filas_demo": 3,
+   "bloque": "rutas"
+  },
+  {
+   "nombre": "paso_parada",
+   "comentario": "Paso del vendedor por cada parada en una jornada. Aquí vive la hora estimada que ve el vecino.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "jornada_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "jornada",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "parada_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "parada",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "hora_estimada",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Calculada por el servidor: inicio real + minutos_desde_salida + retraso.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "hora_llegada_real",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "hora_salida_real",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(12)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'PENDIENTE'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_paso_llegada",
+     "definicion": "CHECK ((((estado)::text <> ALL ((ARRAY['EN_PARADA'::character varying, 'COMPLETADO'::character varying])::text[])) OR (hora_llegada_real IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_paso_orden",
+     "definicion": "CHECK (((hora_salida_real IS NULL) OR (hora_salida_real >= hora_llegada_real)))"
+    },
+    {
+     "nombre": "paso_parada_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['PENDIENTE'::character varying, 'EN_PARADA'::character varying, 'COMPLETADO'::character varying, 'OMITIDO'::character varying, 'CANCELADO'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_paso_parada",
+     "definicion": "UNIQUE (jornada_id, parada_id)"
+    }
+   ],
+   "filas_demo": 11,
+   "bloque": "rutas"
+  },
+  {
+   "nombre": "suscripcion",
+   "comentario": "Qué vendedores quiere que le avisen a cada vecino y con cuánta antelación.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vecino_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vecino",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vendedor_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vendedor",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "parada_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Parada preferida si el vendedor para en varios sitios del pueblo.",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "parada",
+      "columna": "id",
+      "al_borrar": "n"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "minutos_antelacion",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "15",
+     "comentario": "Por defecto 15 minutos antes de la hora estimada.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "activa",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "suscripcion_minutos_antelacion_check",
+     "definicion": "CHECK (((minutos_antelacion >= 5) AND (minutos_antelacion <= 120)))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_suscripcion",
+     "definicion": "UNIQUE (vecino_id, vendedor_id)"
+    }
+   ],
+   "filas_demo": 9,
+   "bloque": "encargos"
+  },
+  {
+   "nombre": "encargo",
+   "comentario": "Pedido que el vecino deja hecho para recoger cuando pase el vendedor. El pago es en mano.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vecino_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vecino",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vendedor_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vendedor",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "parada_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Dónde se recoge. Con fecha_entrega identifica el paso_parada (ruta de la parada + fecha).",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "parada",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "fecha_entrega",
+     "tipo": "date",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "date"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(12)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'PENDIENTE'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    },
+    {
+     "nombre": "creado_por_usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "El propio vecino o un familiar en su nombre.",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "entrega_a_domicilio",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "notas",
+     "tipo": "character varying(300)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(300)"
+    },
+    {
+     "nombre": "motivo_rechazo",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "importe_total",
+     "tipo": "numeric(8,2)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Lo rellena el vendedor al prepararlo (los productos a peso varían).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(8,2)"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_actualizacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_encargo_rechazo",
+     "definicion": "CHECK ((((estado)::text <> 'RECHAZADO'::text) OR (motivo_rechazo IS NOT NULL)))"
+    },
+    {
+     "nombre": "encargo_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['PENDIENTE'::character varying, 'ACEPTADO'::character varying, 'PREPARADO'::character varying, 'ENTREGADO'::character varying, 'NO_RECOGIDO'::character varying, 'RECHAZADO'::character varying, 'CANCELADO'::character varying])::text[])))"
+    },
+    {
+     "nombre": "encargo_importe_total_check",
+     "definicion": "CHECK ((importe_total >= (0)::numeric))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 8,
+   "bloque": "encargos"
+  },
+  {
+   "nombre": "linea_encargo",
+   "comentario": "Cada producto del encargo.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "encargo_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "encargo",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "producto_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "producto",
+      "columna": "id",
+      "al_borrar": "n"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "descripcion",
+     "tipo": "character varying(150)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Copia del nombre del producto o texto libre (\"1 hogaza poco hecha\").",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(150)"
+    },
+    {
+     "nombre": "cantidad",
+     "tipo": "numeric(7,2)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(7,2)"
+    },
+    {
+     "nombre": "unidad",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'UNIDAD'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "precio_unitario",
+     "tipo": "numeric(8,2)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "numeric(8,2)"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "linea_encargo_cantidad_check",
+     "definicion": "CHECK ((cantidad > (0)::numeric))"
+    },
+    {
+     "nombre": "linea_encargo_precio_unitario_check",
+     "definicion": "CHECK ((precio_unitario >= (0)::numeric))"
+    },
+    {
+     "nombre": "linea_encargo_unidad_check",
+     "definicion": "CHECK (((unidad)::text = ANY ((ARRAY['UNIDAD'::character varying, 'KG'::character varying, 'GRAMOS'::character varying, 'DOCENA'::character varying, 'LITRO'::character varying, 'PAQUETE'::character varying, 'BANDEJA'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 14,
+   "bloque": "encargos"
+  },
+  {
+   "nombre": "historial_encargo",
+   "comentario": "Trazabilidad de los cambios de estado de cada encargo (se rellena con un trigger).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "encargo_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "encargo",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "estado_anterior",
+     "tipo": "character varying(12)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    },
+    {
+     "nombre": "estado_nuevo",
+     "tipo": "character varying(12)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(12)"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "n"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "comentario",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 10,
+   "bloque": "encargos"
+  },
+  {
+   "nombre": "gestor_municipal",
+   "comentario": "Personas del ayuntamiento que publican avisos. N:M porque un secretario suele llevar varios pueblos.",
+   "columnas": [
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "cargo",
+     "tipo": "character varying(60)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(60)"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 4,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "centro_salud",
+   "comentario": "Centro de salud de referencia de la zona (p. ej. Utrillas).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(120)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "direccion",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "telefono",
+     "tipo": "character varying(20)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 1,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "consulta_medica",
+   "comentario": "Horario semanal habitual de consulta en el pueblo. Sin datos clínicos.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "centro_salud_id",
+     "tipo": "integer",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "centro_salud",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "character varying(15)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'MEDICINA'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(15)"
+    },
+    {
+     "nombre": "dia_semana",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "hora_inicio",
+     "tipo": "time without time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "time"
+    },
+    {
+     "nombre": "hora_fin",
+     "tipo": "time without time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "time"
+    },
+    {
+     "nombre": "lugar",
+     "tipo": "character varying(120)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'Consultorio local'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "activa",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_consulta_horas",
+     "definicion": "CHECK ((hora_fin > hora_inicio))"
+    },
+    {
+     "nombre": "consulta_medica_dia_semana_check",
+     "definicion": "CHECK (((dia_semana >= 1) AND (dia_semana <= 7)))"
+    },
+    {
+     "nombre": "consulta_medica_tipo_check",
+     "definicion": "CHECK (((tipo)::text = ANY ((ARRAY['MEDICINA'::character varying, 'ENFERMERIA'::character varying, 'PEDIATRIA'::character varying, 'EXTRACCIONES'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 9,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "incidencia_consulta",
+   "comentario": "Cambio puntual de una consulta: \"Hoy no hay consulta, id a Utrillas\".",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "consulta_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "consulta_medica",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "date",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "date"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "character varying(15)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(15)"
+    },
+    {
+     "nombre": "hora_inicio_nueva",
+     "tipo": "time without time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "time"
+    },
+    {
+     "nombre": "hora_fin_nueva",
+     "tipo": "time without time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "time"
+    },
+    {
+     "nombre": "lugar_alternativo",
+     "tipo": "character varying(120)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "centro_alternativo_id",
+     "tipo": "integer",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "centro_salud",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "motivo",
+     "tipo": "character varying(200)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Motivo genérico (vacaciones, formación). Nunca información clínica.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(200)"
+    },
+    {
+     "nombre": "aviso_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Aviso que se generó automáticamente al publicar la incidencia.",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "aviso",
+      "columna": "id",
+      "al_borrar": "n"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "publicado_por_usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "fecha_publicacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "ck_incidencia_horario",
+     "definicion": "CHECK ((((tipo)::text <> 'CAMBIO_HORARIO'::text) OR ((hora_inicio_nueva IS NOT NULL) AND (hora_fin_nueva IS NOT NULL) AND (hora_fin_nueva > hora_inicio_nueva))))"
+    },
+    {
+     "nombre": "ck_incidencia_lugar",
+     "definicion": "CHECK ((((tipo)::text <> 'CAMBIO_LUGAR'::text) OR (lugar_alternativo IS NOT NULL) OR (centro_alternativo_id IS NOT NULL)))"
+    },
+    {
+     "nombre": "incidencia_consulta_tipo_check",
+     "definicion": "CHECK (((tipo)::text = ANY ((ARRAY['CANCELADA'::character varying, 'CAMBIO_HORARIO'::character varying, 'CAMBIO_LUGAR'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": [
+    {
+     "nombre": "uq_incidencia",
+     "definicion": "UNIQUE (consulta_id, fecha)"
+    }
+   ],
+   "filas_demo": 1,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "aviso",
+   "comentario": "Avisos del ayuntamiento (cortes de agua, cambios de consulta, fiestas...).",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "autor_usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "categoria",
+     "tipo": "character varying(20)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'GENERAL'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(20)"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "character varying(120)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "contenido",
+     "tipo": "text",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "text"
+    },
+    {
+     "nombre": "prioridad",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'NORMAL'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'BORRADOR'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "enviar_push",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "visible_desde",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "visible_hasta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_creacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_publicacion",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "aviso_categoria_check",
+     "definicion": "CHECK (((categoria)::text = ANY ((ARRAY['GENERAL'::character varying, 'SANIDAD'::character varying, 'SUMINISTROS'::character varying, 'TRAMITES'::character varying, 'FIESTAS'::character varying, 'TRANSPORTE'::character varying, 'EMERGENCIA'::character varying])::text[])))"
+    },
+    {
+     "nombre": "aviso_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['BORRADOR'::character varying, 'PUBLICADO'::character varying, 'ARCHIVADO'::character varying])::text[])))"
+    },
+    {
+     "nombre": "aviso_prioridad_check",
+     "definicion": "CHECK (((prioridad)::text = ANY ((ARRAY['NORMAL'::character varying, 'IMPORTANTE'::character varying, 'URGENTE'::character varying])::text[])))"
+    },
+    {
+     "nombre": "ck_aviso_publicado",
+     "definicion": "CHECK ((((estado)::text = 'BORRADOR'::text) OR (fecha_publicacion IS NOT NULL)))"
+    },
+    {
+     "nombre": "ck_aviso_visibilidad",
+     "definicion": "CHECK (((visible_hasta IS NULL) OR (visible_hasta > visible_desde)))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 6,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "aviso_municipio",
+   "comentario": "Un aviso puede ir a varios pueblos a la vez (p. ej. toda la comarca).",
+   "columnas": [
+    {
+     "nombre": "aviso_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "aviso",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 11,
+   "bloque": "ayuntamiento"
+  },
+  {
+   "nombre": "notificacion",
+   "comentario": "Bandeja de avisos de cada usuario y registro de lo enviado por FCM.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "usuario_id",
+     "tipo": "bigint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "usuario",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "vecino_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "De quién trata el aviso (si lo recibe un familiar, es el vecino al que ayuda).",
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "vecino",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "character varying(25)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(25)"
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "character varying(120)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "cuerpo",
+     "tipo": "character varying(400)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(400)"
+    },
+    {
+     "nombre": "paso_parada_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "paso_parada",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "encargo_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "encargo",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "aviso_id",
+     "tipo": "bigint",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "aviso",
+      "columna": "id",
+      "al_borrar": "c"
+     },
+     "tipo_corto": "bigint"
+    },
+    {
+     "nombre": "clave_deduplicacion",
+     "tipo": "character varying(150)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Garantiza \"un solo aviso, sin duplicados\". Ej.: LLEGADA_PROXIMA:<paso_parada>:<usuario>.",
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "varchar(150)"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "character varying(10)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'PENDIENTE'::character varying",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(10)"
+    },
+    {
+     "nombre": "intentos",
+     "tipo": "smallint",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "0",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "smallint"
+    },
+    {
+     "nombre": "ultimo_error",
+     "tipo": "character varying(300)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(300)"
+    },
+    {
+     "nombre": "fecha_programada",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_envio",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_lectura",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": [
+    {
+     "nombre": "notificacion_estado_check",
+     "definicion": "CHECK (((estado)::text = ANY ((ARRAY['PENDIENTE'::character varying, 'ENVIADA'::character varying, 'FALLIDA'::character varying, 'LEIDA'::character varying])::text[])))"
+    },
+    {
+     "nombre": "notificacion_intentos_check",
+     "definicion": "CHECK ((intentos >= 0))"
+    },
+    {
+     "nombre": "notificacion_tipo_check",
+     "definicion": "CHECK (((tipo)::text = ANY ((ARRAY['LLEGADA_PROXIMA'::character varying, 'VENDEDOR_EN_PARADA'::character varying, 'RUTA_RETRASADA'::character varying, 'RUTA_CANCELADA'::character varying, 'ENCARGO_ACTUALIZADO'::character varying, 'AVISO_MUNICIPAL'::character varying, 'CAMBIO_CONSULTA'::character varying, 'NUEVO_ENCARGO'::character varying, 'SOLICITUD_FAMILIAR'::character varying])::text[])))"
+    }
+   ],
+   "unicos_compuestos": null,
+   "filas_demo": 11,
+   "bloque": "avisos"
+  },
+  {
+   "nombre": "pantalla_tablon",
+   "comentario": "Pantallas del tablón web (bar, local social). Entran con un enlace secreto, sin usuario.",
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": true,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": true,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "municipio_id",
+     "tipo": "integer",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": {
+      "tabla": "municipio",
+      "columna": "id",
+      "al_borrar": "a"
+     },
+     "tipo_corto": "int"
+    },
+    {
+     "nombre": "nombre",
+     "tipo": "character varying(80)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(80)"
+    },
+    {
+     "nombre": "ubicacion",
+     "tipo": "character varying(120)",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(120)"
+    },
+    {
+     "nombre": "token_hash",
+     "tipo": "character(64)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "SHA-256 del token del enlace del tablón.",
+     "pk": false,
+     "unico": true,
+     "fk": null,
+     "tipo_corto": "char(64)"
+    },
+    {
+     "nombre": "activa",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "true",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
+     "nombre": "fecha_alta",
+     "tipo": "timestamp with time zone",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "now()",
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "ultimo_acceso",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": null,
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
+    }
+   ],
+   "checks": null,
+   "unicos_compuestos": null,
+   "filas_demo": 3,
+   "bloque": "avisos"
+  }
+ ],
+ "vistas": [
+  {
+   "nombre": "v_avisos_vigentes",
+   "comentario": "Avisos del ayuntamiento que se deben mostrar ahora en cada pueblo.",
+   "columnas": [
+    "municipio_id",
+    "aviso_id",
+    "categoria",
+    "prioridad",
+    "titulo",
+    "contenido",
+    "visible_desde",
+    "visible_hasta",
+    "fecha_publicacion"
+   ]
+  },
+  {
+   "nombre": "v_consultas_hoy",
+   "comentario": "Consulta médica de hoy por pueblo; situacion = NORMAL, CANCELADA, CAMBIO_HORARIO o CAMBIO_LUGAR.",
+   "columnas": [
+    "consulta_id",
+    "municipio_id",
+    "municipio",
+    "tipo",
+    "hora_inicio",
+    "hora_fin",
+    "lugar",
+    "situacion",
+    "motivo"
+   ]
+  },
+  {
+   "nombre": "v_destinatarios_llegada",
+   "comentario": "La usa la tarea programada: cada minuto busca filas con hora_aviso <= now() y crea la notificación (la clave evita duplicados).",
+   "columnas": [
+    "paso_parada_id",
+    "vecino_id",
+    "usuario_id",
+    "hora_aviso",
+    "clave_deduplicacion"
+   ]
+  },
+  {
+   "nombre": "v_encargos_parada",
+   "comentario": "Encargos con el nombre del vecino y un resumen de productos, para la lista del vendedor.",
+   "columnas": [
+    "encargo_id",
+    "vendedor_id",
+    "parada_id",
+    "fecha_entrega",
+    "municipio",
+    "punto_encuentro",
+    "vecino",
+    "telefono_vecino",
+    "entrega_a_domicilio",
+    "direccion",
+    "estado",
+    "notas",
+    "importe_total",
+    "resumen"
+   ]
+  },
+  {
+   "nombre": "v_servicios_hoy",
+   "comentario": "Qué servicios pasan hoy por cada pueblo y a qué hora estimada.",
+   "columnas": [
+    "municipio_id",
+    "municipio",
+    "paso_parada_id",
+    "vendedor_id",
+    "vendedor",
+    "categorias",
+    "punto_encuentro",
+    "hora_estimada",
+    "hora_llegada_real",
+    "estado_paso",
+    "estado_jornada",
+    "retraso_minutos"
+   ]
+  }
+ ],
+ "triggers": [
+  {
+   "nombre": "tg_encargo_fecha_actualizacion",
+   "tabla": "encargo",
+   "funcion": "fn_tocar_fecha_actualizacion"
+  },
+  {
+   "nombre": "tg_encargo_historial",
+   "tabla": "encargo",
+   "funcion": "fn_encargo_auditar"
+  },
+  {
+   "nombre": "tg_encargo_validar",
+   "tabla": "encargo",
+   "funcion": "fn_validar_encargo"
+  },
+  {
+   "nombre": "tg_familiar_validar",
+   "tabla": "familiar_vecino",
+   "funcion": "fn_validar_familiar"
+  },
+  {
+   "nombre": "tg_paso_parada_validar",
+   "tabla": "paso_parada",
+   "funcion": "fn_validar_paso_parada"
+  },
+  {
+   "nombre": "tg_suscripcion_validar",
+   "tabla": "suscripcion",
+   "funcion": "fn_validar_suscripcion"
+  }
+ ],
+ "relaciones": [
+  {
+   "desde": "aviso",
+   "columna": "autor_usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "aviso_municipio",
+   "columna": "aviso_id",
+   "hacia": "aviso",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "aviso_municipio",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "centro_salud",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "comarca",
+   "columna": "provincia_id",
+   "hacia": "provincia",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "consulta_medica",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "consulta_medica",
+   "columna": "centro_salud_id",
+   "hacia": "centro_salud",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "dispositivo",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "encargo",
+   "columna": "vecino_id",
+   "hacia": "vecino",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "encargo",
+   "columna": "vendedor_id",
+   "hacia": "vendedor",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "encargo",
+   "columna": "parada_id",
+   "hacia": "parada",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "encargo",
+   "columna": "creado_por_usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "familiar_vecino",
+   "columna": "familiar_usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "familiar_vecino",
+   "columna": "vecino_id",
+   "hacia": "vecino",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "gestor_municipal",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "gestor_municipal",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "historial_encargo",
+   "columna": "encargo_id",
+   "hacia": "encargo",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "historial_encargo",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "SET NULL"
+  },
+  {
+   "desde": "incidencia_consulta",
+   "columna": "consulta_id",
+   "hacia": "consulta_medica",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "incidencia_consulta",
+   "columna": "centro_alternativo_id",
+   "hacia": "centro_salud",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "incidencia_consulta",
+   "columna": "aviso_id",
+   "hacia": "aviso",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "SET NULL"
+  },
+  {
+   "desde": "incidencia_consulta",
+   "columna": "publicado_por_usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "jornada",
+   "columna": "ruta_id",
+   "hacia": "ruta",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "linea_encargo",
+   "columna": "encargo_id",
+   "hacia": "encargo",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "linea_encargo",
+   "columna": "producto_id",
+   "hacia": "producto",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "SET NULL"
+  },
+  {
+   "desde": "municipio",
+   "columna": "provincia_id",
+   "hacia": "provincia",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "municipio",
+   "columna": "comarca_id",
+   "hacia": "comarca",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "notificacion",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "notificacion",
+   "columna": "vecino_id",
+   "hacia": "vecino",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "notificacion",
+   "columna": "paso_parada_id",
+   "hacia": "paso_parada",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "notificacion",
+   "columna": "encargo_id",
+   "hacia": "encargo",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "notificacion",
+   "columna": "aviso_id",
+   "hacia": "aviso",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "pantalla_tablon",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "parada",
+   "columna": "ruta_id",
+   "hacia": "ruta",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "parada",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "paso_parada",
+   "columna": "jornada_id",
+   "hacia": "jornada",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "paso_parada",
+   "columna": "parada_id",
+   "hacia": "parada",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "producto",
+   "columna": "vendedor_id",
+   "hacia": "vendedor",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "producto",
+   "columna": "categoria_id",
+   "hacia": "categoria_servicio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "ruta",
+   "columna": "vendedor_id",
+   "hacia": "vendedor",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "ruta_dia",
+   "columna": "ruta_id",
+   "hacia": "ruta",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "suscripcion",
+   "columna": "vecino_id",
+   "hacia": "vecino",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "suscripcion",
+   "columna": "vendedor_id",
+   "hacia": "vendedor",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "suscripcion",
+   "columna": "parada_id",
+   "hacia": "parada",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "SET NULL"
+  },
+  {
+   "desde": "token_refresco",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "usuario_rol",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "usuario_rol",
+   "columna": "rol_id",
+   "hacia": "rol",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "vecino",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "1:1",
+   "opcional": true,
+   "al_borrar": "SET NULL"
+  },
+  {
+   "desde": "vecino",
+   "columna": "municipio_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "vendedor",
+   "columna": "usuario_id",
+   "hacia": "usuario",
+   "columna_destino": "id",
+   "cardinalidad": "1:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "vendedor",
+   "columna": "municipio_base_id",
+   "hacia": "municipio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": true,
+   "al_borrar": "NO ACTION"
+  },
+  {
+   "desde": "vendedor_categoria",
+   "columna": "vendedor_id",
+   "hacia": "vendedor",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "CASCADE"
+  },
+  {
+   "desde": "vendedor_categoria",
+   "columna": "categoria_id",
+   "hacia": "categoria_servicio",
+   "columna_destino": "id",
+   "cardinalidad": "N:1",
+   "opcional": false,
+   "al_borrar": "NO ACTION"
+  }
+ ],
+ "bloques": [
+  {
+   "clave": "territorio",
+   "titulo": "Territorio",
+   "tablas": [
+    "provincia",
+    "comarca",
+    "municipio"
+   ]
+  },
+  {
+   "clave": "usuarios",
+   "titulo": "Usuarios y seguridad",
+   "tablas": [
+    "usuario",
+    "rol",
+    "usuario_rol",
+    "token_refresco",
+    "dispositivo"
+   ]
+  },
+  {
+   "clave": "vecinos",
+   "titulo": "Vecinos y familias",
+   "tablas": [
+    "vecino",
+    "familiar_vecino"
+   ]
+  },
+  {
+   "clave": "vendedores",
+   "titulo": "Vendedores y catálogo",
+   "tablas": [
+    "categoria_servicio",
+    "vendedor",
+    "vendedor_categoria",
+    "producto"
+   ]
+  },
+  {
+   "clave": "rutas",
+   "titulo": "Rutas",
+   "tablas": [
+    "ruta",
+    "ruta_dia",
+    "parada",
+    "jornada",
+    "paso_parada"
+   ]
+  },
+  {
+   "clave": "encargos",
+   "titulo": "Suscripciones y encargos",
+   "tablas": [
+    "suscripcion",
+    "encargo",
+    "linea_encargo",
+    "historial_encargo"
+   ]
+  },
+  {
+   "clave": "ayuntamiento",
+   "titulo": "Ayuntamiento y salud",
+   "tablas": [
+    "gestor_municipal",
+    "centro_salud",
+    "consulta_medica",
+    "incidencia_consulta",
+    "aviso",
+    "aviso_municipio"
+   ]
+  },
+  {
+   "clave": "avisos",
+   "titulo": "Notificaciones y tablón",
+   "tablas": [
+    "notificacion",
+    "pantalla_tablon"
+   ]
+  }
+ ],
+ "resumen": {
+  "tablas": 31,
+  "columnas": 236,
+  "relaciones": 53,
+  "vistas": 5,
+  "triggers": 6,
+  "indices": 80,
+  "checks": 50
+ }
+}

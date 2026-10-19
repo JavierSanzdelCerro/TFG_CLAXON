@@ -1,0 +1,36 @@
+# Entorno
+.env
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Java / Spring Boot
+target/
+build/
+.gradle/
+*.class
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+app/build/
+*.g.dart.bak
+
+# Node (herramientas de documentación)
+node_modules/
+
+# Firebase (claves privadas: nunca al repo)
+google-services.json
+GoogleService-Info.plist
+*-firebase-adminsdk-*.json

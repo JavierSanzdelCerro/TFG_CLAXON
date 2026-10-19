@@ -1,0 +1,493 @@
+// Claxon · generado por database/herramientas/exportar_modelo.py
+// Ábrelo en https://dbdiagram.io (Import → DBML) para moverlo y exportarlo como imagen o PDF.
+
+Project claxon {
+  database_type: 'PostgreSQL'
+  Note: 'El radar de lo que pasa por tu pueblo. Avisos de servicios ambulantes y encargos.'
+}
+
+Table provincia {
+  id smallint [pk, increment]
+  nombre varchar(60) [not null, unique]
+  codigo_ine char(2) [unique]
+  Note: 'Provincias donde opera Claxon (el piloto empieza en Teruel).'
+}
+
+Table comarca {
+  id smallint [pk, increment]
+  provincia_id smallint [not null]
+  nombre varchar(80) [not null]
+  Note: 'Comarcas (en Aragón agrupan servicios entre pueblos cercanos).'
+}
+
+Table municipio {
+  id int [pk, increment]
+  provincia_id smallint [not null]
+  comarca_id smallint
+  nombre varchar(100) [not null]
+  codigo_ine char(5) [unique]
+  habitantes int
+  latitud numeric(9,6)
+  longitud numeric(9,6)
+  activo bool [not null, default: `true`, note: 'FALSE si el pueblo deja de usar Claxon (no se borra para conservar el histórico).']
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Pueblos dados de alta en Claxon.'
+}
+
+Table usuario {
+  id bigint [pk, increment]
+  email varchar(150)
+  telefono varchar(20) [unique, note: 'Alternativa al email: muchas personas mayores no usan correo.']
+  password_hash varchar(100) [not null, note: 'Hash BCrypt de la contraseña (nunca la contraseña en claro).']
+  nombre varchar(80) [not null]
+  apellidos varchar(120)
+  tamano_texto varchar(12) [not null, default: `'GRANDE'::character varying`, note: 'Preferencia de accesibilidad. Por defecto GRANDE.']
+  alto_contraste bool [not null, default: `false`]
+  idioma varchar(5) [not null, default: `'es'::character varying`]
+  email_verificado bool [not null, default: `false`]
+  activo bool [not null, default: `true`]
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+  ultimo_acceso timestamp_with_time_zone
+  fecha_baja timestamp_with_time_zone
+  Note: 'Cuenta para entrar en la app o en el panel web. Un usuario puede tener varios roles.'
+}
+
+Table rol {
+  id smallint [pk, increment]
+  codigo varchar(20) [not null, unique]
+  nombre varchar(40) [not null]
+  descripcion varchar(200)
+  Note: 'Perfiles de la aplicación. Se usan en Spring Security como ROLE_<codigo>.'
+}
+
+Table usuario_rol {
+  usuario_id bigint
+  rol_id smallint
+  fecha_asignacion timestamp_with_time_zone [not null, default: `now()`]
+
+  indexes {
+    (usuario_id, rol_id) [pk]
+  }
+  Note: 'Relación N:M: un vendedor también puede ser vecino de su pueblo, por ejemplo.'
+}
+
+Table token_refresco {
+  id bigint [pk, increment]
+  usuario_id bigint [not null]
+  token_hash char(64) [not null, unique, note: 'SHA-256 del token en hexadecimal (64 caracteres).']
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  fecha_expiracion timestamp_with_time_zone [not null]
+  revocado bool [not null, default: `false`]
+  agente_usuario varchar(200)
+  Note: 'Tokens de refresco del JWT. Permite cerrar sesión en un dispositivo concreto.'
+}
+
+Table dispositivo {
+  id bigint [pk, increment]
+  usuario_id bigint [not null]
+  token_push varchar(255) [not null, unique, note: 'Token de registro de Firebase Cloud Messaging.']
+  plataforma varchar(10) [not null]
+  modelo varchar(80)
+  activo bool [not null, default: `true`]
+  fecha_registro timestamp_with_time_zone [not null, default: `now()`]
+  ultimo_uso timestamp_with_time_zone
+  Note: 'Móviles de cada usuario donde se envían las notificaciones push.'
+}
+
+Table vecino {
+  id bigint [pk, increment]
+  usuario_id bigint [unique, note: 'NULL si el vecino no usa la app (lo gestiona un familiar).']
+  municipio_id int [not null]
+  nombre varchar(80) [not null]
+  apellidos varchar(120)
+  telefono varchar(20)
+  direccion varchar(200)
+  necesita_ayuda_entrega bool [not null, default: `false`, note: 'Movilidad reducida: el vendedor se lo acerca a casa si puede.']
+  notas_entrega varchar(300) [note: 'Indicaciones para el vendedor. Nunca datos de salud.']
+  activo bool [not null, default: `true`]
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Persona que vive en el pueblo. Puede NO tener cuenta: en ese caso la gestiona un familiar.'
+}
+
+Table familiar_vecino {
+  familiar_usuario_id bigint
+  vecino_id bigint
+  parentesco varchar(30) [not null]
+  puede_hacer_encargos bool [not null, default: `true`]
+  recibe_avisos bool [not null, default: `true`]
+  estado varchar(10) [not null, default: `'PENDIENTE'::character varying`]
+  codigo_invitacion char(6) [note: 'Código de 6 caracteres para vincularse sin compartir contraseñas.']
+  fecha_solicitud timestamp_with_time_zone [not null, default: `now()`]
+  fecha_respuesta timestamp_with_time_zone
+
+  indexes {
+    (familiar_usuario_id, vecino_id) [pk]
+  }
+  Note: 'Familiares que ayudan a un vecino desde fuera del pueblo.'
+}
+
+Table categoria_servicio {
+  id smallint [pk, increment]
+  codigo varchar(20) [not null, unique]
+  nombre varchar(40) [not null]
+  icono varchar(40) [not null, note: 'Nombre del icono en la app (p. ej. "croissant" de Lucide).']
+  color char(7)
+  Note: 'Tipos de servicio ambulante: pan, pescado, fruta, carne...'
+}
+
+Table vendedor {
+  id bigint [pk, increment]
+  usuario_id bigint [not null, unique]
+  nombre_comercial varchar(120) [not null]
+  nif varchar(9) [unique]
+  telefono_contacto varchar(20)
+  descripcion varchar(400)
+  municipio_base_id int [note: 'Pueblo desde el que sale el vendedor.']
+  acepta_encargos bool [not null, default: `true`]
+  horas_antelacion_encargo smallint [not null, default: `12`, note: 'Horas mínimas antes del reparto para aceptar un encargo.']
+  activo bool [not null, default: `true`]
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Negocio ambulante (panadería, pescadería...).'
+}
+
+Table vendedor_categoria {
+  vendedor_id bigint
+  categoria_id smallint
+
+  indexes {
+    (vendedor_id, categoria_id) [pk]
+  }
+  Note: 'Un vendedor puede ofrecer varias categorías (p. ej. pan y bollería, fruta y verdura).'
+}
+
+Table producto {
+  id bigint [pk, increment]
+  vendedor_id bigint [not null]
+  categoria_id smallint
+  nombre varchar(100) [not null]
+  descripcion varchar(300)
+  precio numeric(8,2) [note: 'Orientativo. NULL = "según peso" o "consultar".']
+  unidad varchar(10) [not null, default: `'UNIDAD'::character varying`]
+  disponible bool [not null, default: `true`]
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Catálogo opcional del vendedor. Si no tiene, los encargos se hacen con texto libre.'
+}
+
+Table ruta {
+  id bigint [pk, increment]
+  vendedor_id bigint [not null]
+  nombre varchar(100) [not null]
+  descripcion varchar(300)
+  hora_salida_prevista time_without_time_zone [not null]
+  activa bool [not null, default: `true`]
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Plantilla de recorrido habitual de un vendedor (qué pueblos y en qué orden).'
+}
+
+Table ruta_dia {
+  ruta_id bigint
+  dia_semana smallint [note: 'ISO 8601: 1 = lunes ... 7 = domingo (igual que DayOfWeek de Java).']
+
+  indexes {
+    (ruta_id, dia_semana) [pk]
+  }
+  Note: 'Días de la semana en que se hace la ruta.'
+}
+
+Table parada {
+  id bigint [pk, increment]
+  ruta_id bigint [not null]
+  municipio_id int [not null]
+  orden smallint [not null]
+  punto_encuentro varchar(100) [not null, default: `'Plaza'::character varying`]
+  minutos_desde_salida smallint [not null, note: 'Base de la hora estimada: salida real + estos minutos (no hay GPS en tiempo real).']
+  duracion_estimada_min smallint [not null, default: `10`]
+  latitud numeric(9,6)
+  longitud numeric(9,6)
+  activa bool [not null, default: `true`]
+  Note: 'Punto donde para el vendedor en cada pueblo de la ruta.'
+}
+
+Table jornada {
+  id bigint [pk, increment]
+  ruta_id bigint [not null]
+  fecha date [not null]
+  estado varchar(12) [not null, default: `'PROGRAMADA'::character varying`]
+  hora_inicio_real timestamp_with_time_zone
+  hora_fin_real timestamp_with_time_zone
+  retraso_minutos smallint [not null, default: `0`, note: 'Retraso que indica el vendedor durante el recorrido; desplaza todas las horas estimadas.']
+  motivo_cancelacion varchar(200)
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Una ruta en un día concreto. Se crea al pulsar «Iniciar ruta» o la genera una tarea programada.'
+}
+
+Table paso_parada {
+  id bigint [pk, increment]
+  jornada_id bigint [not null]
+  parada_id bigint [not null]
+  hora_estimada timestamp_with_time_zone [not null, note: 'Calculada por el servidor: inicio real + minutos_desde_salida + retraso.']
+  hora_llegada_real timestamp_with_time_zone
+  hora_salida_real timestamp_with_time_zone
+  estado varchar(12) [not null, default: `'PENDIENTE'::character varying`]
+  Note: 'Paso del vendedor por cada parada en una jornada. Aquí vive la hora estimada que ve el vecino.'
+}
+
+Table suscripcion {
+  id bigint [pk, increment]
+  vecino_id bigint [not null]
+  vendedor_id bigint [not null]
+  parada_id bigint [note: 'Parada preferida si el vendedor para en varios sitios del pueblo.']
+  minutos_antelacion smallint [not null, default: `15`, note: 'Por defecto 15 minutos antes de la hora estimada.']
+  activa bool [not null, default: `true`]
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Qué vendedores quiere que le avisen a cada vecino y con cuánta antelación.'
+}
+
+Table encargo {
+  id bigint [pk, increment]
+  vecino_id bigint [not null]
+  vendedor_id bigint [not null]
+  parada_id bigint [not null, note: 'Dónde se recoge. Con fecha_entrega identifica el paso_parada (ruta de la parada + fecha).']
+  fecha_entrega date [not null]
+  estado varchar(12) [not null, default: `'PENDIENTE'::character varying`]
+  creado_por_usuario_id bigint [not null, note: 'El propio vecino o un familiar en su nombre.']
+  entrega_a_domicilio bool [not null, default: `false`]
+  notas varchar(300)
+  motivo_rechazo varchar(200)
+  importe_total numeric(8,2) [note: 'Lo rellena el vendedor al prepararlo (los productos a peso varían).']
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  fecha_actualizacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Pedido que el vecino deja hecho para recoger cuando pase el vendedor. El pago es en mano.'
+}
+
+Table linea_encargo {
+  id bigint [pk, increment]
+  encargo_id bigint [not null]
+  producto_id bigint
+  descripcion varchar(150) [not null, note: 'Copia del nombre del producto o texto libre ("1 hogaza poco hecha").']
+  cantidad numeric(7,2) [not null]
+  unidad varchar(10) [not null, default: `'UNIDAD'::character varying`]
+  precio_unitario numeric(8,2)
+  Note: 'Cada producto del encargo.'
+}
+
+Table historial_encargo {
+  id bigint [pk, increment]
+  encargo_id bigint [not null]
+  estado_anterior varchar(12)
+  estado_nuevo varchar(12) [not null]
+  usuario_id bigint
+  comentario varchar(200)
+  fecha timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Trazabilidad de los cambios de estado de cada encargo (se rellena con un trigger).'
+}
+
+Table gestor_municipal {
+  usuario_id bigint
+  municipio_id int
+  cargo varchar(60) [not null]
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+
+  indexes {
+    (usuario_id, municipio_id) [pk]
+  }
+  Note: 'Personas del ayuntamiento que publican avisos. N:M porque un secretario suele llevar varios pueblos.'
+}
+
+Table centro_salud {
+  id int [pk, increment]
+  municipio_id int [not null]
+  nombre varchar(120) [not null]
+  direccion varchar(200)
+  telefono varchar(20)
+  Note: 'Centro de salud de referencia de la zona (p. ej. Utrillas).'
+}
+
+Table consulta_medica {
+  id bigint [pk, increment]
+  municipio_id int [not null]
+  centro_salud_id int
+  tipo varchar(15) [not null, default: `'MEDICINA'::character varying`]
+  dia_semana smallint [not null]
+  hora_inicio time_without_time_zone [not null]
+  hora_fin time_without_time_zone [not null]
+  lugar varchar(120) [not null, default: `'Consultorio local'::character varying`]
+  activa bool [not null, default: `true`]
+  Note: 'Horario semanal habitual de consulta en el pueblo. Sin datos clínicos.'
+}
+
+Table incidencia_consulta {
+  id bigint [pk, increment]
+  consulta_id bigint [not null]
+  fecha date [not null]
+  tipo varchar(15) [not null]
+  hora_inicio_nueva time_without_time_zone
+  hora_fin_nueva time_without_time_zone
+  lugar_alternativo varchar(120)
+  centro_alternativo_id int
+  motivo varchar(200) [note: 'Motivo genérico (vacaciones, formación). Nunca información clínica.']
+  aviso_id bigint [note: 'Aviso que se generó automáticamente al publicar la incidencia.']
+  publicado_por_usuario_id bigint [not null]
+  fecha_publicacion timestamp_with_time_zone [not null, default: `now()`]
+  Note: 'Cambio puntual de una consulta: "Hoy no hay consulta, id a Utrillas".'
+}
+
+Table aviso {
+  id bigint [pk, increment]
+  autor_usuario_id bigint [not null]
+  categoria varchar(20) [not null, default: `'GENERAL'::character varying`]
+  titulo varchar(120) [not null]
+  contenido text [not null]
+  prioridad varchar(10) [not null, default: `'NORMAL'::character varying`]
+  estado varchar(10) [not null, default: `'BORRADOR'::character varying`]
+  enviar_push bool [not null, default: `true`]
+  visible_desde timestamp_with_time_zone [not null, default: `now()`]
+  visible_hasta timestamp_with_time_zone
+  fecha_creacion timestamp_with_time_zone [not null, default: `now()`]
+  fecha_publicacion timestamp_with_time_zone
+  Note: 'Avisos del ayuntamiento (cortes de agua, cambios de consulta, fiestas...).'
+}
+
+Table aviso_municipio {
+  aviso_id bigint
+  municipio_id int
+
+  indexes {
+    (aviso_id, municipio_id) [pk]
+  }
+  Note: 'Un aviso puede ir a varios pueblos a la vez (p. ej. toda la comarca).'
+}
+
+Table notificacion {
+  id bigint [pk, increment]
+  usuario_id bigint [not null]
+  vecino_id bigint [note: 'De quién trata el aviso (si lo recibe un familiar, es el vecino al que ayuda).']
+  tipo varchar(25) [not null]
+  titulo varchar(120) [not null]
+  cuerpo varchar(400) [not null]
+  paso_parada_id bigint
+  encargo_id bigint
+  aviso_id bigint
+  clave_deduplicacion varchar(150) [not null, unique, note: 'Garantiza "un solo aviso, sin duplicados". Ej.: LLEGADA_PROXIMA:<paso_parada>:<usuario>.']
+  estado varchar(10) [not null, default: `'PENDIENTE'::character varying`]
+  intentos smallint [not null, default: `0`]
+  ultimo_error varchar(300)
+  fecha_programada timestamp_with_time_zone [not null, default: `now()`]
+  fecha_envio timestamp_with_time_zone
+  fecha_lectura timestamp_with_time_zone
+  Note: 'Bandeja de avisos de cada usuario y registro de lo enviado por FCM.'
+}
+
+Table pantalla_tablon {
+  id int [pk, increment]
+  municipio_id int [not null]
+  nombre varchar(80) [not null]
+  ubicacion varchar(120)
+  token_hash char(64) [not null, unique, note: 'SHA-256 del token del enlace del tablón.']
+  activa bool [not null, default: `true`]
+  fecha_alta timestamp_with_time_zone [not null, default: `now()`]
+  ultimo_acceso timestamp_with_time_zone
+  Note: 'Pantallas del tablón web (bar, local social). Entran con un enlace secreto, sin usuario.'
+}
+
+Ref: aviso.autor_usuario_id > usuario.id
+Ref: aviso_municipio.aviso_id > aviso.id [delete: cascade]
+Ref: aviso_municipio.municipio_id > municipio.id
+Ref: centro_salud.municipio_id > municipio.id
+Ref: comarca.provincia_id > provincia.id
+Ref: consulta_medica.municipio_id > municipio.id
+Ref: consulta_medica.centro_salud_id > centro_salud.id
+Ref: dispositivo.usuario_id > usuario.id [delete: cascade]
+Ref: encargo.vecino_id > vecino.id
+Ref: encargo.vendedor_id > vendedor.id
+Ref: encargo.parada_id > parada.id
+Ref: encargo.creado_por_usuario_id > usuario.id
+Ref: familiar_vecino.familiar_usuario_id > usuario.id [delete: cascade]
+Ref: familiar_vecino.vecino_id > vecino.id [delete: cascade]
+Ref: gestor_municipal.usuario_id > usuario.id [delete: cascade]
+Ref: gestor_municipal.municipio_id > municipio.id
+Ref: historial_encargo.encargo_id > encargo.id [delete: cascade]
+Ref: historial_encargo.usuario_id > usuario.id [delete: set null]
+Ref: incidencia_consulta.consulta_id > consulta_medica.id [delete: cascade]
+Ref: incidencia_consulta.centro_alternativo_id > centro_salud.id
+Ref: incidencia_consulta.aviso_id > aviso.id [delete: set null]
+Ref: incidencia_consulta.publicado_por_usuario_id > usuario.id
+Ref: jornada.ruta_id > ruta.id
+Ref: linea_encargo.encargo_id > encargo.id [delete: cascade]
+Ref: linea_encargo.producto_id > producto.id [delete: set null]
+Ref: municipio.provincia_id > provincia.id
+Ref: municipio.comarca_id > comarca.id
+Ref: notificacion.usuario_id > usuario.id [delete: cascade]
+Ref: notificacion.vecino_id > vecino.id [delete: cascade]
+Ref: notificacion.paso_parada_id > paso_parada.id [delete: cascade]
+Ref: notificacion.encargo_id > encargo.id [delete: cascade]
+Ref: notificacion.aviso_id > aviso.id [delete: cascade]
+Ref: pantalla_tablon.municipio_id > municipio.id
+Ref: parada.ruta_id > ruta.id [delete: cascade]
+Ref: parada.municipio_id > municipio.id
+Ref: paso_parada.jornada_id > jornada.id [delete: cascade]
+Ref: paso_parada.parada_id > parada.id
+Ref: producto.vendedor_id > vendedor.id [delete: cascade]
+Ref: producto.categoria_id > categoria_servicio.id
+Ref: ruta.vendedor_id > vendedor.id [delete: cascade]
+Ref: ruta_dia.ruta_id > ruta.id [delete: cascade]
+Ref: suscripcion.vecino_id > vecino.id [delete: cascade]
+Ref: suscripcion.vendedor_id > vendedor.id [delete: cascade]
+Ref: suscripcion.parada_id > parada.id [delete: set null]
+Ref: token_refresco.usuario_id > usuario.id [delete: cascade]
+Ref: usuario_rol.usuario_id > usuario.id [delete: cascade]
+Ref: usuario_rol.rol_id > rol.id
+Ref: vecino.usuario_id - usuario.id [delete: set null]
+Ref: vecino.municipio_id > municipio.id
+Ref: vendedor.usuario_id - usuario.id
+Ref: vendedor.municipio_base_id > municipio.id
+Ref: vendedor_categoria.vendedor_id > vendedor.id [delete: cascade]
+Ref: vendedor_categoria.categoria_id > categoria_servicio.id
+
+TableGroup territorio {
+  provincia
+  comarca
+  municipio
+}
+TableGroup usuarios {
+  usuario
+  rol
+  usuario_rol
+  token_refresco
+  dispositivo
+}
+TableGroup vecinos {
+  vecino
+  familiar_vecino
+}
+TableGroup vendedores {
+  categoria_servicio
+  vendedor
+  vendedor_categoria
+  producto
+}
+TableGroup rutas {
+  ruta
+  ruta_dia
+  parada
+  jornada
+  paso_parada
+}
+TableGroup encargos {
+  suscripcion
+  encargo
+  linea_encargo
+  historial_encargo
+}
+TableGroup ayuntamiento {
+  gestor_municipal
+  centro_salud
+  consulta_medica
+  incidencia_consulta
+  aviso
+  aviso_municipio
+}
+TableGroup avisos {
+  notificacion
+  pantalla_tablon
+}

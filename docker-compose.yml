@@ -1,0 +1,47 @@
+# Claxon · entorno de desarrollo
+#   docker compose up -d      → arranca PostgreSQL y Adminer
+#   http://localhost:8081     → Adminer (ver y editar la base de datos en el navegador)
+#   docker compose down -v    → para todo y BORRA los datos (al volver a arrancar se recargan los datos demo)
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: claxon-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-claxon}
+      POSTGRES_USER: ${POSTGRES_USER:-claxon}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-claxon}
+      TZ: Europe/Madrid
+      PGTZ: Europe/Madrid
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - claxon-datos:/var/lib/postgresql/data
+      # Solo se ejecutan la primera vez (con el volumen vacío), en orden alfabético
+      - ./database/01_esquema.sql:/docker-entrypoint-initdb.d/01_esquema.sql:ro
+      - ./database/02_datos_demo.sql:/docker-entrypoint-initdb.d/02_datos_demo.sql:ro
+      - ./database/03_pruebas.sql:/pruebas/03_pruebas.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  adminer:
+    image: adminer:4
+    container_name: claxon-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: pepa-linha
+    # Escucha en IPv4 (la imagen escucha por defecto en IPv6 y falla en equipos sin IPv6)
+    command: ["php", "-S", "0.0.0.0:8080", "-t", "/var/www/html"]
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  claxon-datos:
