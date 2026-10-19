@@ -26,15 +26,10 @@ DSN = sys.argv[1] if len(sys.argv) > 1 else "postgresql://claxon:claxon@localhos
 
 # Bloques funcionales (orden = orden de lectura en los diagramas)
 BLOQUES = [
-    ("territorio",  "Territorio",            ["provincia", "comarca", "municipio"]),
-    ("usuarios",    "Usuarios y seguridad",  ["usuario", "rol", "usuario_rol", "token_refresco", "dispositivo"]),
-    ("vecinos",     "Vecinos y familias",    ["vecino", "familiar_vecino"]),
-    ("vendedores",  "Vendedores y catálogo", ["categoria_servicio", "vendedor", "vendedor_categoria", "producto"]),
-    ("rutas",       "Rutas",                 ["ruta", "ruta_dia", "parada", "jornada", "paso_parada"]),
-    ("encargos",    "Suscripciones y encargos", ["suscripcion", "encargo", "linea_encargo", "historial_encargo"]),
-    ("ayuntamiento","Ayuntamiento y salud",  ["gestor_municipal", "centro_salud", "consulta_medica",
-                                              "incidencia_consulta", "aviso", "aviso_municipio"]),
-    ("avisos",      "Notificaciones y tablón", ["notificacion", "pantalla_tablon"]),
+    ("personas",     "Pueblos y personas", ["municipio", "usuario", "familiar"]),
+    ("vendedores",   "Vendedores",         ["producto", "parada", "suscripcion"]),
+    ("encargos",     "Encargos",           ["encargo", "linea_encargo"]),
+    ("ayuntamiento", "Ayuntamiento",       ["consulta", "aviso"]),
 ]
 
 CONSULTA = r"""

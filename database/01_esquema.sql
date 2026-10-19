@@ -1,35 +1,28 @@
 -- =============================================================================
 --  CLAXON · El radar de lo que pasa por tu pueblo
---  Esquema de base de datos relacional (PostgreSQL 16)
+--  Base de datos (PostgreSQL 16) · 10 tablas
 --
---  Bloques:
---    1. Territorio ............ provincia, comarca, municipio
---    2. Usuarios y seguridad .. usuario, rol, usuario_rol, token_refresco, dispositivo
---    3. Vecinos y familias .... vecino, familiar_vecino
---    4. Vendedores y catálogo . categoria_servicio, vendedor, vendedor_categoria, producto
---    5. Rutas ................. ruta, ruta_dia, parada, jornada, paso_parada
---    6. Encargos .............. suscripcion, encargo, linea_encargo, historial_encargo
---    7. Ayuntamiento y salud .. gestor_municipal, centro_salud, consulta_medica,
---                               incidencia_consulta, aviso, aviso_municipio
---    8. Avisos y tablón ....... notificacion, pantalla_tablon
+--   Pueblos y personas ...... municipio, usuario, familiar
+--   Vendedores .............. producto, parada, suscripcion
+--   Encargos ................ encargo, linea_encargo
+--   Ayuntamiento ............ consulta, aviso
 --
---  Convenciones:
---    · Tablas y columnas en español, snake_case y en singular.
---    · Claves primarias "id" con IDENTITY (encaja con GenerationType.IDENTITY de JPA).
---    · Los estados y tipos son VARCHAR + CHECK (se mapean con @Enumerated(STRING)).
---    · Fechas con hora en TIMESTAMPTZ; horas "de reloj" (10:40) en TIME.
---    · La zona horaria de referencia es Europe/Madrid.
+--  Ideas clave:
+--   · Todas las personas están en «usuario» (vecino, familiar, vendedor,
+--     ayuntamiento, admin). Un vecino sin móvil es un usuario sin contraseña
+--     que gestiona un familiar.
+--   · La ruta del vendedor son sus paradas. Cada parada guarda además cómo va
+--     HOY (hora estimada, llegada, estado): no hace falta otra tabla por día.
+--   · Los estados son VARCHAR + CHECK (se mapean con @Enumerated(STRING) en JPA).
+--   · Zona horaria de referencia: Europe/Madrid.
 -- =============================================================================
 
 SET client_encoding = 'UTF8';
 SET timezone = 'Europe/Madrid';
 
--- Por si se relanza el script en una base de datos ya creada
 DROP SCHEMA IF EXISTS claxon CASCADE;
 CREATE SCHEMA claxon;
 SET search_path TO claxon, public;
-
-COMMENT ON SCHEMA claxon IS 'Base de datos de Claxon: avisos de servicios ambulantes y encargos en pueblos pequeños.';
 
 -- Zona horaria y esquema por defecto para cualquier conexión a esta base de datos
 DO $$
@@ -40,331 +33,166 @@ END $$;
 
 
 -- =============================================================================
--- 1. TERRITORIO
+-- PUEBLOS Y PERSONAS
 -- =============================================================================
-
-CREATE TABLE provincia (
-    id          SMALLINT     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre      VARCHAR(60)  NOT NULL UNIQUE,
-    codigo_ine  CHAR(2)      UNIQUE
-);
-COMMENT ON TABLE provincia IS 'Provincias donde opera Claxon (el piloto empieza en Teruel).';
-
-CREATE TABLE comarca (
-    id            SMALLINT     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    provincia_id  SMALLINT     NOT NULL REFERENCES provincia (id),
-    nombre        VARCHAR(80)  NOT NULL,
-    CONSTRAINT uq_comarca_nombre UNIQUE (provincia_id, nombre)
-);
-COMMENT ON TABLE comarca IS 'Comarcas (en Aragón agrupan servicios entre pueblos cercanos).';
 
 CREATE TABLE municipio (
-    id            INTEGER       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    provincia_id  SMALLINT      NOT NULL REFERENCES provincia (id),
-    comarca_id    SMALLINT      REFERENCES comarca (id),
-    nombre        VARCHAR(100)  NOT NULL,
-    codigo_ine    CHAR(5)       UNIQUE,
-    habitantes    INTEGER       CHECK (habitantes >= 0),
-    latitud       NUMERIC(9,6)  CHECK (latitud  BETWEEN -90  AND 90),
-    longitud      NUMERIC(9,6)  CHECK (longitud BETWEEN -180 AND 180),
-    activo        BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_alta    TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    CONSTRAINT uq_municipio_nombre UNIQUE (provincia_id, nombre)
+    id                 INTEGER       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre             VARCHAR(100)  NOT NULL UNIQUE,
+    comarca            VARCHAR(80),
+    provincia          VARCHAR(60)   NOT NULL DEFAULT 'Teruel',
+    gestor_id          BIGINT,       -- clave ajena a usuario (se añade más abajo)
+    tablon_ubicacion   VARCHAR(120),
+    tablon_token_hash  CHAR(64)      UNIQUE,
+    activo             BOOLEAN       NOT NULL DEFAULT TRUE,
+    CONSTRAINT ck_municipio_tablon CHECK ((tablon_ubicacion IS NULL) = (tablon_token_hash IS NULL))
 );
-COMMENT ON TABLE  municipio        IS 'Pueblos dados de alta en Claxon.';
-COMMENT ON COLUMN municipio.activo IS 'FALSE si el pueblo deja de usar Claxon (no se borra para conservar el histórico).';
-
-
--- =============================================================================
--- 2. USUARIOS Y SEGURIDAD
--- =============================================================================
+COMMENT ON TABLE  municipio                   IS 'Pueblos donde funciona Claxon.';
+COMMENT ON COLUMN municipio.gestor_id         IS 'Persona del ayuntamiento que publica los avisos. Una secretaria puede llevar varios pueblos.';
+COMMENT ON COLUMN municipio.tablon_token_hash IS 'SHA-256 del enlace secreto del tablón del bar. NULL si el pueblo no tiene tablón.';
 
 CREATE TABLE usuario (
-    id                BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email             VARCHAR(150),
-    telefono          VARCHAR(20),
-    password_hash     VARCHAR(100)  NOT NULL,
-    nombre            VARCHAR(80)   NOT NULL,
-    apellidos         VARCHAR(120),
-    tamano_texto      VARCHAR(12)   NOT NULL DEFAULT 'GRANDE'
-                      CHECK (tamano_texto IN ('NORMAL', 'GRANDE', 'MUY_GRANDE')),
-    alto_contraste    BOOLEAN       NOT NULL DEFAULT FALSE,
-    idioma            VARCHAR(5)    NOT NULL DEFAULT 'es',
-    email_verificado  BOOLEAN       NOT NULL DEFAULT FALSE,
-    activo            BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_alta        TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    ultimo_acceso     TIMESTAMPTZ,
-    fecha_baja        TIMESTAMPTZ,
-    CONSTRAINT ck_usuario_contacto CHECK (email IS NOT NULL OR telefono IS NOT NULL),
-    CONSTRAINT ck_usuario_email    CHECK (email IS NULL OR email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
-    CONSTRAINT ck_usuario_baja     CHECK (fecha_baja IS NULL OR activo = FALSE)
-);
--- El email y el teléfono no se pueden repetir (sin distinguir mayúsculas en el email)
-CREATE UNIQUE INDEX uq_usuario_email    ON usuario (lower(email)) WHERE email IS NOT NULL;
-CREATE UNIQUE INDEX uq_usuario_telefono ON usuario (telefono)     WHERE telefono IS NOT NULL;
-
-COMMENT ON TABLE  usuario               IS 'Cuenta para entrar en la app o en el panel web. Un usuario puede tener varios roles.';
-COMMENT ON COLUMN usuario.telefono      IS 'Alternativa al email: muchas personas mayores no usan correo.';
-COMMENT ON COLUMN usuario.password_hash IS 'Hash BCrypt de la contraseña (nunca la contraseña en claro).';
-COMMENT ON COLUMN usuario.tamano_texto  IS 'Preferencia de accesibilidad. Por defecto GRANDE.';
-
-CREATE TABLE rol (
-    id           SMALLINT     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    codigo       VARCHAR(20)  NOT NULL UNIQUE
-                 CHECK (codigo IN ('VECINO', 'FAMILIAR', 'VENDEDOR', 'AYUNTAMIENTO', 'ADMIN')),
-    nombre       VARCHAR(40)  NOT NULL,
-    descripcion  VARCHAR(200)
-);
-COMMENT ON TABLE rol IS 'Perfiles de la aplicación. Se usan en Spring Security como ROLE_<codigo>.';
-
-CREATE TABLE usuario_rol (
-    usuario_id        BIGINT       NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    rol_id            SMALLINT     NOT NULL REFERENCES rol (id),
-    fecha_asignacion  TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    PRIMARY KEY (usuario_id, rol_id)
-);
-COMMENT ON TABLE usuario_rol IS 'Relación N:M: un vendedor también puede ser vecino de su pueblo, por ejemplo.';
-
-CREATE TABLE token_refresco (
-    id                BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    usuario_id        BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    token_hash        CHAR(64)      NOT NULL UNIQUE,
-    fecha_creacion    TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    fecha_expiracion  TIMESTAMPTZ   NOT NULL,
-    revocado          BOOLEAN       NOT NULL DEFAULT FALSE,
-    agente_usuario    VARCHAR(200),
-    CONSTRAINT ck_token_fechas CHECK (fecha_expiracion > fecha_creacion)
-);
-COMMENT ON TABLE  token_refresco            IS 'Tokens de refresco del JWT. Permite cerrar sesión en un dispositivo concreto.';
-COMMENT ON COLUMN token_refresco.token_hash IS 'SHA-256 del token en hexadecimal (64 caracteres).';
-
-CREATE TABLE dispositivo (
-    id              BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    usuario_id      BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    token_push      VARCHAR(255)  NOT NULL UNIQUE,
-    plataforma      VARCHAR(10)   NOT NULL CHECK (plataforma IN ('ANDROID', 'IOS', 'WEB')),
-    modelo          VARCHAR(80),
-    activo          BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_registro  TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    ultimo_uso      TIMESTAMPTZ
-);
-COMMENT ON TABLE  dispositivo            IS 'Móviles de cada usuario donde se envían las notificaciones push.';
-COMMENT ON COLUMN dispositivo.token_push IS 'Token de registro de Firebase Cloud Messaging.';
-
-
--- =============================================================================
--- 3. VECINOS Y FAMILIAS
--- =============================================================================
-
-CREATE TABLE vecino (
-    id                       BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    usuario_id               BIGINT        UNIQUE REFERENCES usuario (id) ON DELETE SET NULL,
-    municipio_id             INTEGER       NOT NULL REFERENCES municipio (id),
-    nombre                   VARCHAR(80)   NOT NULL,
-    apellidos                VARCHAR(120),
-    telefono                 VARCHAR(20),
-    direccion                VARCHAR(200),
-    necesita_ayuda_entrega   BOOLEAN       NOT NULL DEFAULT FALSE,
-    notas_entrega            VARCHAR(300),
-    activo                   BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_alta               TIMESTAMPTZ   NOT NULL DEFAULT now()
-);
-COMMENT ON TABLE  vecino                        IS 'Persona que vive en el pueblo. Puede NO tener cuenta: en ese caso la gestiona un familiar.';
-COMMENT ON COLUMN vecino.usuario_id             IS 'NULL si el vecino no usa la app (lo gestiona un familiar).';
-COMMENT ON COLUMN vecino.necesita_ayuda_entrega IS 'Movilidad reducida: el vendedor se lo acerca a casa si puede.';
-COMMENT ON COLUMN vecino.notas_entrega          IS 'Indicaciones para el vendedor. Nunca datos de salud.';
-
-CREATE TABLE familiar_vecino (
-    familiar_usuario_id  BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    vecino_id            BIGINT        NOT NULL REFERENCES vecino (id)  ON DELETE CASCADE,
-    parentesco           VARCHAR(30)   NOT NULL,
-    puede_hacer_encargos BOOLEAN       NOT NULL DEFAULT TRUE,
-    recibe_avisos        BOOLEAN       NOT NULL DEFAULT TRUE,
-    estado               VARCHAR(10)   NOT NULL DEFAULT 'PENDIENTE'
-                         CHECK (estado IN ('PENDIENTE', 'ACEPTADA', 'RECHAZADA', 'REVOCADA')),
-    codigo_invitacion    CHAR(6),
-    fecha_solicitud      TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    fecha_respuesta      TIMESTAMPTZ,
-    PRIMARY KEY (familiar_usuario_id, vecino_id),
-    CONSTRAINT ck_familiar_respuesta CHECK (estado = 'PENDIENTE' OR fecha_respuesta IS NOT NULL)
-);
-COMMENT ON TABLE  familiar_vecino                   IS 'Familiares que ayudan a un vecino desde fuera del pueblo.';
-COMMENT ON COLUMN familiar_vecino.codigo_invitacion IS 'Código de 6 caracteres para vincularse sin compartir contraseñas.';
-
-
--- =============================================================================
--- 4. VENDEDORES Y CATÁLOGO
--- =============================================================================
-
-CREATE TABLE categoria_servicio (
-    id      SMALLINT     GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    codigo  VARCHAR(20)  NOT NULL UNIQUE,
-    nombre  VARCHAR(40)  NOT NULL,
-    icono   VARCHAR(40)  NOT NULL,
-    color   CHAR(7)      CHECK (color ~ '^#[0-9A-Fa-f]{6}$')
-);
-COMMENT ON TABLE  categoria_servicio       IS 'Tipos de servicio ambulante: pan, pescado, fruta, carne...';
-COMMENT ON COLUMN categoria_servicio.icono IS 'Nombre del icono en la app (p. ej. "croissant" de Lucide).';
-
-CREATE TABLE vendedor (
     id                        BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    usuario_id                BIGINT        NOT NULL UNIQUE REFERENCES usuario (id),
-    nombre_comercial          VARCHAR(120)  NOT NULL,
-    nif                       VARCHAR(9)    UNIQUE,
-    telefono_contacto         VARCHAR(20),
-    descripcion               VARCHAR(400),
-    municipio_base_id         INTEGER       REFERENCES municipio (id),
+    rol                       VARCHAR(15)   NOT NULL
+                              CHECK (rol IN ('VECINO', 'FAMILIAR', 'VENDEDOR', 'AYUNTAMIENTO', 'ADMIN')),
+    nombre                    VARCHAR(80)   NOT NULL,
+    apellidos                 VARCHAR(120),
+    email                     VARCHAR(150)  UNIQUE CHECK (email = lower(email)),
+    telefono                  VARCHAR(20)   UNIQUE,
+    password_hash             VARCHAR(100),
+    municipio_id              INTEGER       REFERENCES municipio (id),
+    -- Vecino
+    direccion                 VARCHAR(200),
+    necesita_ayuda_entrega    BOOLEAN       NOT NULL DEFAULT FALSE,
+    notas_entrega             VARCHAR(300),
+    codigo_familia            CHAR(6)       UNIQUE,
+    -- Preferencias y móvil
+    tamano_texto              VARCHAR(12)   NOT NULL DEFAULT 'GRANDE'
+                              CHECK (tamano_texto IN ('NORMAL', 'GRANDE', 'MUY_GRANDE')),
+    alto_contraste            BOOLEAN       NOT NULL DEFAULT FALSE,
+    token_push                VARCHAR(255),
+    -- Vendedor
+    nombre_comercial          VARCHAR(120),
+    categoria                 VARCHAR(15)
+                              CHECK (categoria IN ('PAN', 'PESCADO', 'FRUTA', 'CARNE', 'ULTRAMARINOS', 'OTROS')),
+    dias_reparto              VARCHAR(7)    CHECK (dias_reparto ~ '^L?M?X?J?V?S?D?$'),
+    hora_salida               TIME,
     acepta_encargos           BOOLEAN       NOT NULL DEFAULT TRUE,
     horas_antelacion_encargo  SMALLINT      NOT NULL DEFAULT 12 CHECK (horas_antelacion_encargo BETWEEN 0 AND 72),
+    -- Control
     activo                    BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_alta                TIMESTAMPTZ   NOT NULL DEFAULT now()
-);
-COMMENT ON TABLE  vendedor                          IS 'Negocio ambulante (panadería, pescadería...).';
-COMMENT ON COLUMN vendedor.municipio_base_id        IS 'Pueblo desde el que sale el vendedor.';
-COMMENT ON COLUMN vendedor.horas_antelacion_encargo IS 'Horas mínimas antes del reparto para aceptar un encargo.';
+    fecha_alta                TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    ultimo_acceso             TIMESTAMPTZ,
 
-CREATE TABLE vendedor_categoria (
-    vendedor_id   BIGINT    NOT NULL REFERENCES vendedor (id) ON DELETE CASCADE,
-    categoria_id  SMALLINT  NOT NULL REFERENCES categoria_servicio (id),
-    PRIMARY KEY (vendedor_id, categoria_id)
+    CONSTRAINT ck_usuario_contacto   CHECK (password_hash IS NULL OR email IS NOT NULL OR telefono IS NOT NULL),
+    CONSTRAINT ck_usuario_sin_cuenta CHECK (password_hash IS NOT NULL OR rol = 'VECINO'),
+    CONSTRAINT ck_usuario_vecino     CHECK (rol <> 'VECINO' OR municipio_id IS NOT NULL),
+    CONSTRAINT ck_usuario_vendedor   CHECK (rol <> 'VENDEDOR' OR (nombre_comercial IS NOT NULL AND categoria IS NOT NULL
+                                                                 AND dias_reparto IS NOT NULL AND hora_salida IS NOT NULL))
 );
-COMMENT ON TABLE vendedor_categoria IS 'Un vendedor puede ofrecer varias categorías (p. ej. pan y bollería, fruta y verdura).';
+COMMENT ON TABLE  usuario                IS 'Todas las personas: vecinos, familiares, vendedores, ayuntamiento y administración.';
+COMMENT ON COLUMN usuario.password_hash  IS 'Hash BCrypt. NULL = vecino sin móvil que gestiona un familiar (no puede entrar).';
+COMMENT ON COLUMN usuario.municipio_id   IS 'Vecino: dónde vive. Vendedor: desde dónde sale.';
+COMMENT ON COLUMN usuario.codigo_familia IS 'Código de 6 caracteres que el vecino da a un familiar para vincularse.';
+COMMENT ON COLUMN usuario.token_push     IS 'Token de Firebase Cloud Messaging del móvil.';
+COMMENT ON COLUMN usuario.dias_reparto   IS 'Días de la ruta del vendedor: letras de LMXJVSD, por ejemplo «LMXJVS».';
+COMMENT ON COLUMN usuario.hora_salida    IS 'Hora habitual a la que sale el vendedor.';
+
+ALTER TABLE municipio
+    ADD CONSTRAINT fk_municipio_gestor FOREIGN KEY (gestor_id) REFERENCES usuario (id) ON DELETE SET NULL;
+
+CREATE TABLE familiar (
+    familiar_id           BIGINT       NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    vecino_id             BIGINT       NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    parentesco            VARCHAR(30)  NOT NULL,
+    puede_hacer_encargos  BOOLEAN      NOT NULL DEFAULT TRUE,
+    recibe_avisos         BOOLEAN      NOT NULL DEFAULT TRUE,
+    estado                VARCHAR(10)  NOT NULL DEFAULT 'PENDIENTE'
+                          CHECK (estado IN ('PENDIENTE', 'ACEPTADO', 'RECHAZADO')),
+    fecha_solicitud       TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    PRIMARY KEY (familiar_id, vecino_id),
+    CONSTRAINT ck_familiar_distinto CHECK (familiar_id <> vecino_id)
+);
+COMMENT ON TABLE familiar IS 'Quién ayuda a quién: un familiar puede ayudar a varios vecinos y un vecino tener varios familiares.';
+
+
+-- =============================================================================
+-- VENDEDORES
+-- =============================================================================
 
 CREATE TABLE producto (
-    id              BIGINT         GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    vendedor_id     BIGINT         NOT NULL REFERENCES vendedor (id) ON DELETE CASCADE,
-    categoria_id    SMALLINT       REFERENCES categoria_servicio (id),
-    nombre          VARCHAR(100)   NOT NULL,
-    descripcion     VARCHAR(300),
-    precio          NUMERIC(8,2)   CHECK (precio >= 0),
-    unidad          VARCHAR(10)    NOT NULL DEFAULT 'UNIDAD'
-                    CHECK (unidad IN ('UNIDAD', 'KG', 'GRAMOS', 'DOCENA', 'LITRO', 'PAQUETE', 'BANDEJA')),
-    disponible      BOOLEAN        NOT NULL DEFAULT TRUE,
-    fecha_creacion  TIMESTAMPTZ    NOT NULL DEFAULT now(),
-    CONSTRAINT uq_producto_nombre UNIQUE (vendedor_id, nombre)
+    id           BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    vendedor_id  BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    nombre       VARCHAR(100)  NOT NULL,
+    precio       NUMERIC(8,2)  CHECK (precio >= 0),
+    unidad       VARCHAR(10)   NOT NULL DEFAULT 'UNIDAD'
+                 CHECK (unidad IN ('UNIDAD', 'KG', 'DOCENA', 'PAQUETE', 'LITRO')),
+    disponible   BOOLEAN       NOT NULL DEFAULT TRUE,
+    CONSTRAINT uq_producto UNIQUE (vendedor_id, nombre)
 );
-COMMENT ON TABLE  producto        IS 'Catálogo opcional del vendedor. Si no tiene, los encargos se hacen con texto libre.';
-COMMENT ON COLUMN producto.precio IS 'Orientativo. NULL = "según peso" o "consultar".';
-
-
--- =============================================================================
--- 5. RUTAS
--- =============================================================================
-
-CREATE TABLE ruta (
-    id                    BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    vendedor_id           BIGINT        NOT NULL REFERENCES vendedor (id) ON DELETE CASCADE,
-    nombre                VARCHAR(100)  NOT NULL,
-    descripcion           VARCHAR(300),
-    hora_salida_prevista  TIME          NOT NULL,
-    activa                BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_creacion        TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    CONSTRAINT uq_ruta_nombre UNIQUE (vendedor_id, nombre)
-);
-COMMENT ON TABLE ruta IS 'Plantilla de recorrido habitual de un vendedor (qué pueblos y en qué orden).';
-
-CREATE TABLE ruta_dia (
-    ruta_id     BIGINT    NOT NULL REFERENCES ruta (id) ON DELETE CASCADE,
-    dia_semana  SMALLINT  NOT NULL CHECK (dia_semana BETWEEN 1 AND 7),
-    PRIMARY KEY (ruta_id, dia_semana)
-);
-COMMENT ON TABLE  ruta_dia            IS 'Días de la semana en que se hace la ruta.';
-COMMENT ON COLUMN ruta_dia.dia_semana IS 'ISO 8601: 1 = lunes ... 7 = domingo (igual que DayOfWeek de Java).';
+COMMENT ON TABLE producto IS 'Catálogo del vendedor. Precio orientativo (NULL = según peso).';
 
 CREATE TABLE parada (
-    id                     BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    ruta_id                BIGINT        NOT NULL REFERENCES ruta (id) ON DELETE CASCADE,
-    municipio_id           INTEGER       NOT NULL REFERENCES municipio (id),
-    orden                  SMALLINT      NOT NULL CHECK (orden >= 1),
-    punto_encuentro        VARCHAR(100)  NOT NULL DEFAULT 'Plaza',
-    minutos_desde_salida   SMALLINT      NOT NULL CHECK (minutos_desde_salida >= 0),
-    duracion_estimada_min  SMALLINT      NOT NULL DEFAULT 10 CHECK (duracion_estimada_min > 0),
-    latitud                NUMERIC(9,6),
-    longitud               NUMERIC(9,6),
-    activa                 BOOLEAN       NOT NULL DEFAULT TRUE,
+    id                    BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    vendedor_id           BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    municipio_id          INTEGER       NOT NULL REFERENCES municipio (id),
+    orden                 SMALLINT      NOT NULL CHECK (orden >= 1),
+    punto_encuentro       VARCHAR(100)  NOT NULL DEFAULT 'Plaza',
+    minutos_desde_salida  SMALLINT      NOT NULL CHECK (minutos_desde_salida >= 0),
+    -- Cómo va hoy (se sobrescribe cada día de reparto)
+    fecha                 DATE,
+    hora_estimada         TIMESTAMPTZ,
+    hora_llegada          TIMESTAMPTZ,
+    estado                VARCHAR(10)
+                          CHECK (estado IN ('PREVISTA', 'EN_CAMINO', 'EN_PARADA', 'HECHA', 'CANCELADA')),
     -- DEFERRABLE permite reordenar paradas dentro de una transacción
-    CONSTRAINT uq_parada_orden UNIQUE (ruta_id, orden) DEFERRABLE INITIALLY IMMEDIATE
+    CONSTRAINT uq_parada_orden  UNIQUE (vendedor_id, orden) DEFERRABLE INITIALLY IMMEDIATE,
+    CONSTRAINT ck_parada_dia    CHECK ((fecha IS NULL) = (estado IS NULL) AND (estado IS NULL OR hora_estimada IS NOT NULL)),
+    CONSTRAINT ck_parada_llegada CHECK (estado NOT IN ('EN_PARADA', 'HECHA') OR hora_llegada IS NOT NULL)
 );
-COMMENT ON TABLE  parada                      IS 'Punto donde para el vendedor en cada pueblo de la ruta.';
-COMMENT ON COLUMN parada.minutos_desde_salida IS 'Base de la hora estimada: salida real + estos minutos (no hay GPS en tiempo real).';
-
-CREATE TABLE jornada (
-    id                  BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    ruta_id             BIGINT        NOT NULL REFERENCES ruta (id),
-    fecha               DATE          NOT NULL,
-    estado              VARCHAR(12)   NOT NULL DEFAULT 'PROGRAMADA'
-                        CHECK (estado IN ('PROGRAMADA', 'EN_CURSO', 'FINALIZADA', 'CANCELADA')),
-    hora_inicio_real    TIMESTAMPTZ,
-    hora_fin_real       TIMESTAMPTZ,
-    retraso_minutos     SMALLINT      NOT NULL DEFAULT 0 CHECK (retraso_minutos BETWEEN -120 AND 600),
-    motivo_cancelacion  VARCHAR(200),
-    fecha_creacion      TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    CONSTRAINT uq_jornada UNIQUE (ruta_id, fecha),
-    CONSTRAINT ck_jornada_inicio   CHECK (estado NOT IN ('EN_CURSO', 'FINALIZADA') OR hora_inicio_real IS NOT NULL),
-    CONSTRAINT ck_jornada_fin      CHECK (estado <> 'FINALIZADA' OR hora_fin_real IS NOT NULL),
-    CONSTRAINT ck_jornada_orden    CHECK (hora_fin_real IS NULL OR hora_fin_real >= hora_inicio_real),
-    CONSTRAINT ck_jornada_cancelar CHECK (estado <> 'CANCELADA' OR motivo_cancelacion IS NOT NULL)
-);
-COMMENT ON TABLE  jornada                 IS 'Una ruta en un día concreto. Se crea al pulsar «Iniciar ruta» o la genera una tarea programada.';
-COMMENT ON COLUMN jornada.retraso_minutos IS 'Retraso que indica el vendedor durante el recorrido; desplaza todas las horas estimadas.';
-
-CREATE TABLE paso_parada (
-    id                BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    jornada_id        BIGINT       NOT NULL REFERENCES jornada (id) ON DELETE CASCADE,
-    parada_id         BIGINT       NOT NULL REFERENCES parada (id),
-    hora_estimada     TIMESTAMPTZ  NOT NULL,
-    hora_llegada_real TIMESTAMPTZ,
-    hora_salida_real  TIMESTAMPTZ,
-    estado            VARCHAR(12)  NOT NULL DEFAULT 'PENDIENTE'
-                      CHECK (estado IN ('PENDIENTE', 'EN_PARADA', 'COMPLETADO', 'OMITIDO', 'CANCELADO')),
-    CONSTRAINT uq_paso_parada UNIQUE (jornada_id, parada_id),
-    CONSTRAINT ck_paso_llegada CHECK (estado NOT IN ('EN_PARADA', 'COMPLETADO') OR hora_llegada_real IS NOT NULL),
-    CONSTRAINT ck_paso_orden   CHECK (hora_salida_real IS NULL OR hora_salida_real >= hora_llegada_real)
-);
-COMMENT ON TABLE  paso_parada               IS 'Paso del vendedor por cada parada en una jornada. Aquí vive la hora estimada que ve el vecino.';
-COMMENT ON COLUMN paso_parada.hora_estimada IS 'Calculada por el servidor: inicio real + minutos_desde_salida + retraso.';
-
-
--- =============================================================================
--- 6. SUSCRIPCIONES Y ENCARGOS
--- =============================================================================
+COMMENT ON TABLE  parada                      IS 'Paradas de la ruta del vendedor, en orden, y cómo va cada una hoy.';
+COMMENT ON COLUMN parada.minutos_desde_salida IS 'Hora estimada = salida + estos minutos (no hay GPS).';
+COMMENT ON COLUMN parada.estado               IS 'PREVISTA: aún no ha salido · EN_CAMINO: ha salido · EN_PARADA: está allí · HECHA · CANCELADA.';
 
 CREATE TABLE suscripcion (
-    id                  BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    vecino_id           BIGINT       NOT NULL REFERENCES vecino (id)   ON DELETE CASCADE,
-    vendedor_id         BIGINT       NOT NULL REFERENCES vendedor (id) ON DELETE CASCADE,
-    parada_id           BIGINT       REFERENCES parada (id) ON DELETE SET NULL,
-    minutos_antelacion  SMALLINT     NOT NULL DEFAULT 15 CHECK (minutos_antelacion BETWEEN 5 AND 120),
-    activa              BOOLEAN      NOT NULL DEFAULT TRUE,
-    fecha_creacion      TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    CONSTRAINT uq_suscripcion UNIQUE (vecino_id, vendedor_id)
+    vecino_id           BIGINT    NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    vendedor_id         BIGINT    NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
+    minutos_antelacion  SMALLINT  NOT NULL DEFAULT 15 CHECK (minutos_antelacion BETWEEN 5 AND 120),
+    activa              BOOLEAN   NOT NULL DEFAULT TRUE,
+    ultimo_aviso        DATE,
+    PRIMARY KEY (vecino_id, vendedor_id),
+    CONSTRAINT ck_suscripcion_distinto CHECK (vecino_id <> vendedor_id)
 );
-COMMENT ON TABLE  suscripcion                    IS 'Qué vendedores quiere que le avisen a cada vecino y con cuánta antelación.';
-COMMENT ON COLUMN suscripcion.parada_id          IS 'Parada preferida si el vendedor para en varios sitios del pueblo.';
-COMMENT ON COLUMN suscripcion.minutos_antelacion IS 'Por defecto 15 minutos antes de la hora estimada.';
+COMMENT ON TABLE  suscripcion              IS 'De qué vendedores quiere aviso cada vecino y con cuánta antelación.';
+COMMENT ON COLUMN suscripcion.ultimo_aviso IS 'Día del último aviso de llegada. Si ya es hoy, no se vuelve a avisar (sin duplicados).';
+
+
+-- =============================================================================
+-- ENCARGOS
+-- =============================================================================
 
 CREATE TABLE encargo (
-    id                     BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    vecino_id              BIGINT        NOT NULL REFERENCES vecino (id),
-    vendedor_id            BIGINT        NOT NULL REFERENCES vendedor (id),
-    parada_id              BIGINT        NOT NULL REFERENCES parada (id),
-    fecha_entrega          DATE          NOT NULL,
-    estado                 VARCHAR(12)   NOT NULL DEFAULT 'PENDIENTE'
-                           CHECK (estado IN ('PENDIENTE', 'ACEPTADO', 'PREPARADO', 'ENTREGADO',
-                                             'NO_RECOGIDO', 'RECHAZADO', 'CANCELADO')),
-    creado_por_usuario_id  BIGINT        NOT NULL REFERENCES usuario (id),
-    entrega_a_domicilio    BOOLEAN       NOT NULL DEFAULT FALSE,
-    notas                  VARCHAR(300),
-    motivo_rechazo         VARCHAR(200),
-    importe_total          NUMERIC(8,2)  CHECK (importe_total >= 0),
-    fecha_creacion         TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    fecha_actualizacion    TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    id               BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    vecino_id        BIGINT        NOT NULL REFERENCES usuario (id),
+    parada_id        BIGINT        NOT NULL REFERENCES parada (id),
+    fecha_entrega    DATE          NOT NULL,
+    estado           VARCHAR(12)   NOT NULL DEFAULT 'PENDIENTE'
+                     CHECK (estado IN ('PENDIENTE', 'ACEPTADO', 'PREPARADO', 'ENTREGADO',
+                                       'NO_RECOGIDO', 'RECHAZADO', 'CANCELADO')),
+    creado_por_id    BIGINT        NOT NULL REFERENCES usuario (id),
+    a_domicilio      BOOLEAN       NOT NULL DEFAULT FALSE,
+    notas            VARCHAR(300),
+    motivo_rechazo   VARCHAR(200),
+    importe_total    NUMERIC(8,2)  CHECK (importe_total >= 0),
+    fecha_creacion   TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    fecha_aceptado   TIMESTAMPTZ,
+    fecha_preparado  TIMESTAMPTZ,
+    fecha_entregado  TIMESTAMPTZ,
     CONSTRAINT ck_encargo_rechazo CHECK (estado <> 'RECHAZADO' OR motivo_rechazo IS NOT NULL)
 );
-COMMENT ON TABLE  encargo                       IS 'Pedido que el vecino deja hecho para recoger cuando pase el vendedor. El pago es en mano.';
-COMMENT ON COLUMN encargo.parada_id             IS 'Dónde se recoge. Con fecha_entrega identifica el paso_parada (ruta de la parada + fecha).';
-COMMENT ON COLUMN encargo.creado_por_usuario_id IS 'El propio vecino o un familiar en su nombre.';
-COMMENT ON COLUMN encargo.importe_total         IS 'Lo rellena el vendedor al prepararlo (los productos a peso varían).';
+COMMENT ON TABLE  encargo               IS 'Pedido para recoger cuando pase el vendedor. El vendedor es el de la parada. Se paga en mano.';
+COMMENT ON COLUMN encargo.creado_por_id IS 'El propio vecino o un familiar en su nombre.';
+COMMENT ON COLUMN encargo.importe_total IS 'Lo pone el vendedor al prepararlo (los productos a peso varían).';
 
 CREATE TABLE linea_encargo (
     id               BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -373,440 +201,188 @@ CREATE TABLE linea_encargo (
     descripcion      VARCHAR(150)  NOT NULL,
     cantidad         NUMERIC(7,2)  NOT NULL CHECK (cantidad > 0),
     unidad           VARCHAR(10)   NOT NULL DEFAULT 'UNIDAD'
-                     CHECK (unidad IN ('UNIDAD', 'KG', 'GRAMOS', 'DOCENA', 'LITRO', 'PAQUETE', 'BANDEJA')),
+                     CHECK (unidad IN ('UNIDAD', 'KG', 'DOCENA', 'PAQUETE', 'LITRO')),
     precio_unitario  NUMERIC(8,2)  CHECK (precio_unitario >= 0)
 );
 COMMENT ON TABLE  linea_encargo             IS 'Cada producto del encargo.';
-COMMENT ON COLUMN linea_encargo.descripcion IS 'Copia del nombre del producto o texto libre ("1 hogaza poco hecha").';
-
-CREATE TABLE historial_encargo (
-    id               BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    encargo_id       BIGINT        NOT NULL REFERENCES encargo (id) ON DELETE CASCADE,
-    estado_anterior  VARCHAR(12),
-    estado_nuevo     VARCHAR(12)   NOT NULL,
-    usuario_id       BIGINT        REFERENCES usuario (id) ON DELETE SET NULL,
-    comentario       VARCHAR(200),
-    fecha            TIMESTAMPTZ   NOT NULL DEFAULT now()
-);
-COMMENT ON TABLE historial_encargo IS 'Trazabilidad de los cambios de estado de cada encargo (se rellena con un trigger).';
+COMMENT ON COLUMN linea_encargo.descripcion IS 'Copia del nombre del producto o texto libre («barra de centeno si hay»).';
 
 
 -- =============================================================================
--- 7. AYUNTAMIENTO Y SALUD
+-- AYUNTAMIENTO
 -- =============================================================================
 
-CREATE TABLE gestor_municipal (
-    usuario_id    BIGINT       NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    municipio_id  INTEGER      NOT NULL REFERENCES municipio (id),
-    cargo         VARCHAR(60)  NOT NULL,
-    fecha_alta    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    PRIMARY KEY (usuario_id, municipio_id)
-);
-COMMENT ON TABLE gestor_municipal IS 'Personas del ayuntamiento que publican avisos. N:M porque un secretario suele llevar varios pueblos.';
-
-CREATE TABLE centro_salud (
-    id            INTEGER       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+CREATE TABLE consulta (
+    id            BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     municipio_id  INTEGER       NOT NULL REFERENCES municipio (id),
-    nombre        VARCHAR(120)  NOT NULL,
-    direccion     VARCHAR(200),
-    telefono      VARCHAR(20)
+    tipo          VARCHAR(12)   NOT NULL DEFAULT 'MEDICINA'
+                  CHECK (tipo IN ('MEDICINA', 'ENFERMERIA', 'PEDIATRIA', 'EXTRACCIONES')),
+    dia_semana    SMALLINT      CHECK (dia_semana BETWEEN 1 AND 7),
+    fecha         DATE,
+    hora_inicio   TIME          NOT NULL,
+    hora_fin      TIME          NOT NULL,
+    lugar         VARCHAR(120)  NOT NULL DEFAULT 'Consultorio local',
+    cancelada     BOOLEAN       NOT NULL DEFAULT FALSE,
+    motivo        VARCHAR(200),
+    CONSTRAINT ck_consulta_tipo_fila CHECK ((dia_semana IS NULL) <> (fecha IS NULL)),
+    CONSTRAINT ck_consulta_horas     CHECK (hora_fin > hora_inicio),
+    CONSTRAINT ck_consulta_cancelar  CHECK (NOT cancelada OR fecha IS NOT NULL)
 );
-COMMENT ON TABLE centro_salud IS 'Centro de salud de referencia de la zona (p. ej. Utrillas).';
-
-CREATE TABLE consulta_medica (
-    id               BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    municipio_id     INTEGER       NOT NULL REFERENCES municipio (id),
-    centro_salud_id  INTEGER       REFERENCES centro_salud (id),
-    tipo             VARCHAR(15)   NOT NULL DEFAULT 'MEDICINA'
-                     CHECK (tipo IN ('MEDICINA', 'ENFERMERIA', 'PEDIATRIA', 'EXTRACCIONES')),
-    dia_semana       SMALLINT      NOT NULL CHECK (dia_semana BETWEEN 1 AND 7),
-    hora_inicio      TIME          NOT NULL,
-    hora_fin         TIME          NOT NULL,
-    lugar            VARCHAR(120)  NOT NULL DEFAULT 'Consultorio local',
-    activa           BOOLEAN       NOT NULL DEFAULT TRUE,
-    CONSTRAINT ck_consulta_horas CHECK (hora_fin > hora_inicio)
-);
-COMMENT ON TABLE consulta_medica IS 'Horario semanal habitual de consulta en el pueblo. Sin datos clínicos.';
+COMMENT ON TABLE  consulta            IS 'Horario de consulta médica. Con dia_semana es el horario habitual; con fecha, un cambio de ese día.';
+COMMENT ON COLUMN consulta.dia_semana IS 'ISO 8601: 1 = lunes ... 7 = domingo (como DayOfWeek de Java).';
+COMMENT ON COLUMN consulta.motivo     IS 'Motivo genérico del cambio. Nunca datos de salud.';
 
 CREATE TABLE aviso (
-    id                BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    autor_usuario_id  BIGINT        NOT NULL REFERENCES usuario (id),
-    categoria         VARCHAR(20)   NOT NULL DEFAULT 'GENERAL'
-                      CHECK (categoria IN ('GENERAL', 'SANIDAD', 'SUMINISTROS', 'TRAMITES',
-                                           'FIESTAS', 'TRANSPORTE', 'EMERGENCIA')),
-    titulo            VARCHAR(120)  NOT NULL,
-    contenido         TEXT          NOT NULL,
-    prioridad         VARCHAR(10)   NOT NULL DEFAULT 'NORMAL'
-                      CHECK (prioridad IN ('NORMAL', 'IMPORTANTE', 'URGENTE')),
-    estado            VARCHAR(10)   NOT NULL DEFAULT 'BORRADOR'
-                      CHECK (estado IN ('BORRADOR', 'PUBLICADO', 'ARCHIVADO')),
-    enviar_push       BOOLEAN       NOT NULL DEFAULT TRUE,
-    visible_desde     TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    visible_hasta     TIMESTAMPTZ,
-    fecha_creacion    TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    fecha_publicacion TIMESTAMPTZ,
-    CONSTRAINT ck_aviso_visibilidad CHECK (visible_hasta IS NULL OR visible_hasta > visible_desde),
-    CONSTRAINT ck_aviso_publicado   CHECK (estado = 'BORRADOR' OR fecha_publicacion IS NOT NULL)
+    id             BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    municipio_id   INTEGER       REFERENCES municipio (id),
+    autor_id       BIGINT        NOT NULL REFERENCES usuario (id),
+    categoria      VARCHAR(12)   NOT NULL DEFAULT 'GENERAL'
+                   CHECK (categoria IN ('GENERAL', 'SANIDAD', 'SUMINISTROS', 'TRAMITES', 'FIESTAS', 'TRANSPORTE')),
+    titulo         VARCHAR(120)  NOT NULL,
+    contenido      TEXT          NOT NULL,
+    prioridad      VARCHAR(10)   NOT NULL DEFAULT 'NORMAL'
+                   CHECK (prioridad IN ('NORMAL', 'IMPORTANTE', 'URGENTE')),
+    estado         VARCHAR(10)   NOT NULL DEFAULT 'BORRADOR'
+                   CHECK (estado IN ('BORRADOR', 'PUBLICADO', 'ARCHIVADO')),
+    enviar_push    BOOLEAN       NOT NULL DEFAULT TRUE,
+    push_enviado   TIMESTAMPTZ,
+    visible_desde  TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    visible_hasta  TIMESTAMPTZ,
+    fecha_creacion TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    CONSTRAINT ck_aviso_fechas CHECK (visible_hasta IS NULL OR visible_hasta > visible_desde)
 );
-COMMENT ON TABLE aviso IS 'Avisos del ayuntamiento (cortes de agua, cambios de consulta, fiestas...).';
-
-CREATE TABLE aviso_municipio (
-    aviso_id      BIGINT   NOT NULL REFERENCES aviso (id) ON DELETE CASCADE,
-    municipio_id  INTEGER  NOT NULL REFERENCES municipio (id),
-    PRIMARY KEY (aviso_id, municipio_id)
-);
-COMMENT ON TABLE aviso_municipio IS 'Un aviso puede ir a varios pueblos a la vez (p. ej. toda la comarca).';
-
-CREATE TABLE incidencia_consulta (
-    id                       BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    consulta_id              BIGINT        NOT NULL REFERENCES consulta_medica (id) ON DELETE CASCADE,
-    fecha                    DATE          NOT NULL,
-    tipo                     VARCHAR(15)   NOT NULL
-                             CHECK (tipo IN ('CANCELADA', 'CAMBIO_HORARIO', 'CAMBIO_LUGAR')),
-    hora_inicio_nueva        TIME,
-    hora_fin_nueva           TIME,
-    lugar_alternativo        VARCHAR(120),
-    centro_alternativo_id    INTEGER       REFERENCES centro_salud (id),
-    motivo                   VARCHAR(200),
-    aviso_id                 BIGINT        REFERENCES aviso (id) ON DELETE SET NULL,
-    publicado_por_usuario_id BIGINT        NOT NULL REFERENCES usuario (id),
-    fecha_publicacion        TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    CONSTRAINT uq_incidencia UNIQUE (consulta_id, fecha),
-    CONSTRAINT ck_incidencia_horario CHECK (
-        tipo <> 'CAMBIO_HORARIO'
-        OR (hora_inicio_nueva IS NOT NULL AND hora_fin_nueva IS NOT NULL AND hora_fin_nueva > hora_inicio_nueva)),
-    CONSTRAINT ck_incidencia_lugar CHECK (
-        tipo <> 'CAMBIO_LUGAR' OR lugar_alternativo IS NOT NULL OR centro_alternativo_id IS NOT NULL)
-);
-COMMENT ON TABLE  incidencia_consulta        IS 'Cambio puntual de una consulta: "Hoy no hay consulta, id a Utrillas".';
-COMMENT ON COLUMN incidencia_consulta.motivo IS 'Motivo genérico (vacaciones, formación). Nunca información clínica.';
-COMMENT ON COLUMN incidencia_consulta.aviso_id IS 'Aviso que se generó automáticamente al publicar la incidencia.';
+COMMENT ON TABLE  aviso              IS 'Avisos del ayuntamiento. Si va a dos pueblos, se guarda una fila por pueblo.';
+COMMENT ON COLUMN aviso.municipio_id IS 'NULL = para todos los pueblos.';
+COMMENT ON COLUMN aviso.push_enviado IS 'Cuándo se mandó la notificación. Si ya tiene fecha, no se vuelve a mandar.';
 
 
 -- =============================================================================
--- 8. NOTIFICACIONES Y TABLÓN
+-- ÍNDICES (PostgreSQL no indexa solo las claves ajenas)
 -- =============================================================================
 
-CREATE TABLE notificacion (
-    id                   BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    usuario_id           BIGINT        NOT NULL REFERENCES usuario (id) ON DELETE CASCADE,
-    vecino_id            BIGINT        REFERENCES vecino (id) ON DELETE CASCADE,
-    tipo                 VARCHAR(25)   NOT NULL
-                         CHECK (tipo IN ('LLEGADA_PROXIMA', 'VENDEDOR_EN_PARADA', 'RUTA_RETRASADA',
-                                         'RUTA_CANCELADA', 'ENCARGO_ACTUALIZADO', 'AVISO_MUNICIPAL',
-                                         'CAMBIO_CONSULTA', 'NUEVO_ENCARGO', 'SOLICITUD_FAMILIAR')),
-    titulo               VARCHAR(120)  NOT NULL,
-    cuerpo               VARCHAR(400)  NOT NULL,
-    paso_parada_id       BIGINT        REFERENCES paso_parada (id) ON DELETE CASCADE,
-    encargo_id           BIGINT        REFERENCES encargo (id) ON DELETE CASCADE,
-    aviso_id             BIGINT        REFERENCES aviso (id) ON DELETE CASCADE,
-    clave_deduplicacion  VARCHAR(150)  NOT NULL UNIQUE,
-    estado               VARCHAR(10)   NOT NULL DEFAULT 'PENDIENTE'
-                         CHECK (estado IN ('PENDIENTE', 'ENVIADA', 'FALLIDA', 'LEIDA')),
-    intentos             SMALLINT      NOT NULL DEFAULT 0 CHECK (intentos >= 0),
-    ultimo_error         VARCHAR(300),
-    fecha_programada     TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    fecha_envio          TIMESTAMPTZ,
-    fecha_lectura        TIMESTAMPTZ
-);
-COMMENT ON TABLE  notificacion                     IS 'Bandeja de avisos de cada usuario y registro de lo enviado por FCM.';
-COMMENT ON COLUMN notificacion.vecino_id           IS 'De quién trata el aviso (si lo recibe un familiar, es el vecino al que ayuda).';
-COMMENT ON COLUMN notificacion.clave_deduplicacion IS 'Garantiza "un solo aviso, sin duplicados". Ej.: LLEGADA_PROXIMA:<paso_parada>:<usuario>.';
-
-CREATE TABLE pantalla_tablon (
-    id             INTEGER       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    municipio_id   INTEGER       NOT NULL REFERENCES municipio (id),
-    nombre         VARCHAR(80)   NOT NULL,
-    ubicacion      VARCHAR(120),
-    token_hash     CHAR(64)      NOT NULL UNIQUE,
-    activa         BOOLEAN       NOT NULL DEFAULT TRUE,
-    fecha_alta     TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    ultimo_acceso  TIMESTAMPTZ
-);
-COMMENT ON TABLE  pantalla_tablon            IS 'Pantallas del tablón web (bar, local social). Entran con un enlace secreto, sin usuario.';
-COMMENT ON COLUMN pantalla_tablon.token_hash IS 'SHA-256 del token del enlace del tablón.';
+CREATE INDEX ix_usuario_municipio  ON usuario (municipio_id);
+CREATE INDEX ix_familiar_vecino    ON familiar (vecino_id);
+CREATE INDEX ix_parada_municipio   ON parada (municipio_id, fecha);
+CREATE INDEX ix_suscripcion_vend   ON suscripcion (vendedor_id);
+CREATE INDEX ix_encargo_parada     ON encargo (parada_id, fecha_entrega);
+CREATE INDEX ix_encargo_vecino     ON encargo (vecino_id, fecha_entrega DESC);
+CREATE INDEX ix_linea_encargo      ON linea_encargo (encargo_id);
+CREATE INDEX ix_consulta_municipio ON consulta (municipio_id);
+CREATE INDEX ix_aviso_municipio    ON aviso (municipio_id, estado);
 
 
 -- =============================================================================
--- ÍNDICES (PostgreSQL no crea índices en las claves ajenas automáticamente)
+-- TRIGGER: apunta la hora de cada cambio de estado del encargo
+-- (es lo que dibuja la línea de tiempo «Enviado → Aceptado → Preparado → Entregado»)
 -- =============================================================================
 
-CREATE INDEX ix_municipio_comarca        ON municipio (comarca_id);
-CREATE INDEX ix_usuario_rol_rol          ON usuario_rol (rol_id);
-CREATE INDEX ix_token_usuario            ON token_refresco (usuario_id) WHERE revocado = FALSE;
-CREATE INDEX ix_dispositivo_usuario      ON dispositivo (usuario_id) WHERE activo;
-CREATE INDEX ix_vecino_municipio         ON vecino (municipio_id);
-CREATE INDEX ix_familiar_vecino_vecino   ON familiar_vecino (vecino_id);
-CREATE INDEX ix_producto_vendedor        ON producto (vendedor_id) WHERE disponible;
-CREATE INDEX ix_ruta_vendedor            ON ruta (vendedor_id);
-CREATE INDEX ix_parada_municipio         ON parada (municipio_id);
-CREATE INDEX ix_jornada_fecha            ON jornada (fecha, estado);
-CREATE INDEX ix_paso_parada_parada       ON paso_parada (parada_id);
-CREATE INDEX ix_paso_parada_hora         ON paso_parada (hora_estimada) WHERE estado = 'PENDIENTE';
-CREATE INDEX ix_suscripcion_vendedor     ON suscripcion (vendedor_id) WHERE activa;
-CREATE INDEX ix_encargo_parada_fecha     ON encargo (parada_id, fecha_entrega);
-CREATE INDEX ix_encargo_vecino           ON encargo (vecino_id, fecha_entrega DESC);
-CREATE INDEX ix_encargo_vendedor_estado  ON encargo (vendedor_id, estado, fecha_entrega);
-CREATE INDEX ix_linea_encargo_encargo    ON linea_encargo (encargo_id);
-CREATE INDEX ix_historial_encargo        ON historial_encargo (encargo_id, fecha);
-CREATE INDEX ix_gestor_municipio         ON gestor_municipal (municipio_id);
-CREATE INDEX ix_consulta_municipio_dia   ON consulta_medica (municipio_id, dia_semana) WHERE activa;
-CREATE INDEX ix_incidencia_fecha         ON incidencia_consulta (fecha);
-CREATE INDEX ix_aviso_estado_fechas      ON aviso (estado, visible_desde, visible_hasta);
-CREATE INDEX ix_aviso_municipio_mun      ON aviso_municipio (municipio_id);
-CREATE INDEX ix_notificacion_bandeja     ON notificacion (usuario_id, fecha_programada DESC);
-CREATE INDEX ix_notificacion_pendiente   ON notificacion (fecha_programada) WHERE estado = 'PENDIENTE';
-CREATE INDEX ix_pantalla_municipio       ON pantalla_tablon (municipio_id);
-
-
--- =============================================================================
--- TRIGGERS DE INTEGRIDAD
--- (reglas que cruzan varias tablas y no se pueden expresar con un CHECK)
--- =============================================================================
-
--- La parada de un paso_parada tiene que ser de la misma ruta que la jornada
-CREATE FUNCTION fn_validar_paso_parada() RETURNS trigger LANGUAGE plpgsql AS $$
+CREATE FUNCTION fn_encargo_fechas() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM jornada j
-        JOIN parada  p ON p.ruta_id = j.ruta_id
-        WHERE j.id = NEW.jornada_id AND p.id = NEW.parada_id
-    ) THEN
-        RAISE EXCEPTION 'La parada % no pertenece a la ruta de la jornada %', NEW.parada_id, NEW.jornada_id
-            USING ERRCODE = 'check_violation';
-    END IF;
+    IF NEW.estado = 'ACEPTADO'  AND NEW.fecha_aceptado  IS NULL THEN NEW.fecha_aceptado  := now(); END IF;
+    IF NEW.estado = 'PREPARADO' AND NEW.fecha_preparado IS NULL THEN NEW.fecha_preparado := now(); END IF;
+    IF NEW.estado = 'ENTREGADO' AND NEW.fecha_entregado IS NULL THEN NEW.fecha_entregado := now(); END IF;
     RETURN NEW;
 END $$;
 
-CREATE TRIGGER tg_paso_parada_validar
-    BEFORE INSERT OR UPDATE OF jornada_id, parada_id ON paso_parada
-    FOR EACH ROW EXECUTE FUNCTION fn_validar_paso_parada();
-
--- La parada de un encargo tiene que ser de una ruta del vendedor del encargo
-CREATE FUNCTION fn_validar_encargo() RETURNS trigger LANGUAGE plpgsql AS $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM parada p
-        JOIN ruta   r ON r.id = p.ruta_id
-        WHERE p.id = NEW.parada_id AND r.vendedor_id = NEW.vendedor_id
-    ) THEN
-        RAISE EXCEPTION 'La parada % no es de ninguna ruta del vendedor %', NEW.parada_id, NEW.vendedor_id
-            USING ERRCODE = 'check_violation';
-    END IF;
-    RETURN NEW;
-END $$;
-
-CREATE TRIGGER tg_encargo_validar
-    BEFORE INSERT OR UPDATE OF parada_id, vendedor_id ON encargo
-    FOR EACH ROW EXECUTE FUNCTION fn_validar_encargo();
-
--- La parada preferida de una suscripción tiene que ser del mismo vendedor
-CREATE FUNCTION fn_validar_suscripcion() RETURNS trigger LANGUAGE plpgsql AS $$
-BEGIN
-    IF NEW.parada_id IS NOT NULL AND NOT EXISTS (
-        SELECT 1
-        FROM parada p
-        JOIN ruta   r ON r.id = p.ruta_id
-        WHERE p.id = NEW.parada_id AND r.vendedor_id = NEW.vendedor_id
-    ) THEN
-        RAISE EXCEPTION 'La parada % no es de ninguna ruta del vendedor %', NEW.parada_id, NEW.vendedor_id
-            USING ERRCODE = 'check_violation';
-    END IF;
-    RETURN NEW;
-END $$;
-
-CREATE TRIGGER tg_suscripcion_validar
-    BEFORE INSERT OR UPDATE OF parada_id, vendedor_id ON suscripcion
-    FOR EACH ROW EXECUTE FUNCTION fn_validar_suscripcion();
-
--- Un familiar no puede vincularse consigo mismo
-CREATE FUNCTION fn_validar_familiar() RETURNS trigger LANGUAGE plpgsql AS $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM vecino v WHERE v.id = NEW.vecino_id AND v.usuario_id = NEW.familiar_usuario_id) THEN
-        RAISE EXCEPTION 'Un usuario no puede ser familiar de sí mismo'
-            USING ERRCODE = 'check_violation';
-    END IF;
-    RETURN NEW;
-END $$;
-
-CREATE TRIGGER tg_familiar_validar
-    BEFORE INSERT OR UPDATE ON familiar_vecino
-    FOR EACH ROW EXECUTE FUNCTION fn_validar_familiar();
-
--- Mantener fecha_actualizacion y guardar el historial de estados del encargo.
--- El backend puede indicar quién hizo el cambio con:  SET LOCAL claxon.usuario_id = '<id>';
-CREATE FUNCTION fn_encargo_auditar() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-    v_usuario BIGINT := NULLIF(current_setting('claxon.usuario_id', TRUE), '')::BIGINT;
-BEGIN
-    IF TG_OP = 'INSERT' THEN
-        INSERT INTO historial_encargo (encargo_id, estado_anterior, estado_nuevo, usuario_id)
-        VALUES (NEW.id, NULL, NEW.estado, COALESCE(v_usuario, NEW.creado_por_usuario_id));
-    ELSIF NEW.estado IS DISTINCT FROM OLD.estado THEN
-        INSERT INTO historial_encargo (encargo_id, estado_anterior, estado_nuevo, usuario_id)
-        VALUES (NEW.id, OLD.estado, NEW.estado, v_usuario);
-    END IF;
-    RETURN NULL;
-END $$;
-
-CREATE FUNCTION fn_tocar_fecha_actualizacion() RETURNS trigger LANGUAGE plpgsql AS $$
-BEGIN
-    NEW.fecha_actualizacion := now();
-    RETURN NEW;
-END $$;
-
-CREATE TRIGGER tg_encargo_fecha_actualizacion
-    BEFORE UPDATE ON encargo
-    FOR EACH ROW EXECUTE FUNCTION fn_tocar_fecha_actualizacion();
-
-CREATE TRIGGER tg_encargo_historial
-    AFTER INSERT OR UPDATE OF estado ON encargo
-    FOR EACH ROW EXECUTE FUNCTION fn_encargo_auditar();
+CREATE TRIGGER tg_encargo_fechas
+    BEFORE UPDATE OF estado ON encargo
+    FOR EACH ROW EXECUTE FUNCTION fn_encargo_fechas();
 
 
 -- =============================================================================
--- VISTAS (consultas que usarán la API y el tablón)
+-- VISTAS (consultas ya hechas para la API y el tablón; no son tablas)
 -- =============================================================================
 
--- Texto legible de una cantidad: «×2», «0,5 kg», «1 docena», «2 paquetes»...
-CREATE FUNCTION fn_formatear_cantidad(p_cantidad NUMERIC, p_unidad VARCHAR)
-RETURNS TEXT LANGUAGE sql IMMUTABLE AS $$
-    SELECT CASE p_unidad
-        WHEN 'UNIDAD'  THEN '×' || n
-        WHEN 'KG'      THEN n || ' kg'
-        WHEN 'GRAMOS'  THEN n || ' g'
-        WHEN 'LITRO'   THEN n || ' l'
-        WHEN 'DOCENA'  THEN n || CASE WHEN p_cantidad = 1 THEN ' docena'  ELSE ' docenas'  END
-        WHEN 'PAQUETE' THEN n || CASE WHEN p_cantidad = 1 THEN ' paquete' ELSE ' paquetes' END
-        WHEN 'BANDEJA' THEN n || CASE WHEN p_cantidad = 1 THEN ' bandeja' ELSE ' bandejas' END
-        ELSE n
-    END
-    FROM (SELECT replace(trim_scale(p_cantidad)::text, '.', ',') AS n) AS x
-$$;
-
--- Servicios que pasan HOY por cada pueblo, con su hora estimada (pantalla "Hoy" y tablón)
+-- Servicios que pasan HOY por cada pueblo (pantalla «Hoy» y tablón)
 CREATE VIEW v_servicios_hoy AS
-SELECT
-    m.id                         AS municipio_id,
-    m.nombre                     AS municipio,
-    pp.id                        AS paso_parada_id,
-    v.id                         AS vendedor_id,
-    v.nombre_comercial           AS vendedor,
-    (SELECT string_agg(c.nombre, ', ' ORDER BY c.nombre)
-       FROM vendedor_categoria vc JOIN categoria_servicio c ON c.id = vc.categoria_id
-      WHERE vc.vendedor_id = v.id)                       AS categorias,
-    p.punto_encuentro,
-    pp.hora_estimada,
-    pp.hora_llegada_real,
-    pp.estado                    AS estado_paso,
-    j.estado                     AS estado_jornada,
-    j.retraso_minutos
-FROM paso_parada pp
-JOIN jornada  j ON j.id = pp.jornada_id
-JOIN parada   p ON p.id = pp.parada_id
-JOIN ruta     r ON r.id = j.ruta_id
-JOIN vendedor v ON v.id = r.vendedor_id
+SELECT m.id               AS municipio_id,
+       m.nombre           AS municipio,
+       p.id               AS parada_id,
+       v.id               AS vendedor_id,
+       v.nombre_comercial AS vendedor,
+       v.categoria,
+       p.punto_encuentro,
+       p.hora_estimada,
+       p.hora_llegada,
+       p.estado
+FROM parada p
+JOIN usuario   v ON v.id = p.vendedor_id
 JOIN municipio m ON m.id = p.municipio_id
-WHERE j.fecha = (now() AT TIME ZONE 'Europe/Madrid')::date;
+WHERE p.fecha = (now() AT TIME ZONE 'Europe/Madrid')::date;
 
-COMMENT ON VIEW v_servicios_hoy IS 'Qué servicios pasan hoy por cada pueblo y a qué hora estimada.';
-
--- Consultas médicas de HOY en cada pueblo, aplicando las incidencias
+-- Consulta médica de HOY en cada pueblo, con el cambio del día si lo hay
 CREATE VIEW v_consultas_hoy AS
-SELECT
-    cm.id                AS consulta_id,
-    m.id                 AS municipio_id,
-    m.nombre             AS municipio,
-    cm.tipo,
-    COALESCE(ic.hora_inicio_nueva, cm.hora_inicio) AS hora_inicio,
-    COALESCE(ic.hora_fin_nueva,    cm.hora_fin)    AS hora_fin,
-    COALESCE(ic.lugar_alternativo, cs.nombre, cm.lugar) AS lugar,
-    COALESCE(ic.tipo, 'NORMAL')                     AS situacion,
-    ic.motivo
-FROM consulta_medica cm
-JOIN municipio m ON m.id = cm.municipio_id
-LEFT JOIN incidencia_consulta ic
-       ON ic.consulta_id = cm.id
-      AND ic.fecha = (now() AT TIME ZONE 'Europe/Madrid')::date
-LEFT JOIN centro_salud cs ON cs.id = ic.centro_alternativo_id
-WHERE cm.activa
-  AND cm.dia_semana = EXTRACT(ISODOW FROM (now() AT TIME ZONE 'Europe/Madrid'))::int;
+SELECT h.municipio_id,
+       m.nombre                                  AS municipio,
+       h.tipo,
+       COALESCE(c.hora_inicio, h.hora_inicio)    AS hora_inicio,
+       COALESCE(c.hora_fin,    h.hora_fin)       AS hora_fin,
+       COALESCE(c.lugar,       h.lugar)          AS lugar,
+       CASE WHEN c.id IS NULL THEN 'NORMAL'
+            WHEN c.cancelada  THEN 'CANCELADA'
+            ELSE 'CAMBIO' END                    AS situacion,
+       c.motivo
+FROM consulta h
+JOIN municipio m ON m.id = h.municipio_id
+LEFT JOIN consulta c ON c.municipio_id = h.municipio_id
+                    AND c.tipo = h.tipo
+                    AND c.fecha = (now() AT TIME ZONE 'Europe/Madrid')::date
+WHERE h.dia_semana = EXTRACT(ISODOW FROM (now() AT TIME ZONE 'Europe/Madrid'))::int;
 
-COMMENT ON VIEW v_consultas_hoy IS 'Consulta médica de hoy por pueblo; situacion = NORMAL, CANCELADA, CAMBIO_HORARIO o CAMBIO_LUGAR.';
-
--- Avisos publicados y vigentes ahora mismo, por pueblo
+-- Avisos que se ven ahora en cada pueblo (los de municipio NULL salen en todos)
 CREATE VIEW v_avisos_vigentes AS
-SELECT
-    am.municipio_id,
-    a.id AS aviso_id,
-    a.categoria,
-    a.prioridad,
-    a.titulo,
-    a.contenido,
-    a.visible_desde,
-    a.visible_hasta,
-    a.fecha_publicacion
+SELECT m.id AS municipio_id, a.id AS aviso_id, a.categoria, a.prioridad, a.titulo, a.contenido,
+       a.visible_desde, a.visible_hasta
 FROM aviso a
-JOIN aviso_municipio am ON am.aviso_id = a.id
+JOIN municipio m ON a.municipio_id IS NULL OR a.municipio_id = m.id
 WHERE a.estado = 'PUBLICADO'
   AND a.visible_desde <= now()
   AND (a.visible_hasta IS NULL OR a.visible_hasta > now());
 
-COMMENT ON VIEW v_avisos_vigentes IS 'Avisos del ayuntamiento que se deben mostrar ahora en cada pueblo.';
-
--- Encargos agrupados por parada y día: lo que ve el vendedor al pulsar «He llegado»
+-- Encargos con nombre del vecino y resumen, para el vendedor al llegar a la parada
 CREATE VIEW v_encargos_parada AS
-SELECT
-    e.id                      AS encargo_id,
-    e.vendedor_id,
-    e.parada_id,
-    e.fecha_entrega,
-    m.nombre                  AS municipio,
-    p.punto_encuentro,
-    trim(ve.nombre || ' ' || COALESCE(ve.apellidos, '')) AS vecino,
-    ve.telefono               AS telefono_vecino,
-    e.entrega_a_domicilio,
-    ve.direccion,
-    e.estado,
-    e.notas,
-    e.importe_total,
-    (SELECT string_agg(l.descripcion || ' ' || fn_formatear_cantidad(l.cantidad, l.unidad),
-                       ' · ' ORDER BY l.id)
-       FROM linea_encargo l WHERE l.encargo_id = e.id) AS resumen
+SELECT e.id AS encargo_id,
+       p.vendedor_id,
+       e.parada_id,
+       e.fecha_entrega,
+       m.nombre AS municipio,
+       trim(u.nombre || ' ' || COALESCE(u.apellidos, '')) AS vecino,
+       u.telefono,
+       e.a_domicilio,
+       u.direccion,
+       e.estado,
+       e.notas,
+       e.importe_total,
+       (SELECT string_agg(l.descripcion || ' ' ||
+                          CASE l.unidad WHEN 'UNIDAD' THEN '×' || trim_scale(l.cantidad)
+                                        ELSE replace(trim_scale(l.cantidad)::text, '.', ',') || ' ' || lower(l.unidad) END,
+                          ' · ' ORDER BY l.id)
+          FROM linea_encargo l WHERE l.encargo_id = e.id) AS resumen
 FROM encargo e
-JOIN vecino    ve ON ve.id = e.vecino_id
-JOIN parada    p  ON p.id = e.parada_id
-JOIN municipio m  ON m.id = p.municipio_id;
+JOIN parada    p ON p.id = e.parada_id
+JOIN usuario   u ON u.id = e.vecino_id
+JOIN municipio m ON m.id = p.municipio_id;
 
-COMMENT ON VIEW v_encargos_parada IS 'Encargos con el nombre del vecino y un resumen de productos, para la lista del vendedor.';
+-- A quién hay que avisar de una llegada y a qué hora. La tarea programada la lee
+-- cada minuto, manda el push al vecino y a sus familiares, y pone ultimo_aviso = hoy.
+CREATE VIEW v_avisos_llegada AS
+SELECT p.id                                                         AS parada_id,
+       s.vecino_id,
+       s.vendedor_id,
+       p.hora_estimada - make_interval(mins => s.minutos_antelacion) AS hora_aviso,
+       -- el vecino (si tiene cuenta) + sus familiares que reciben avisos
+       array_remove(ARRAY[CASE WHEN ve.password_hash IS NOT NULL THEN ve.id END], NULL)
+         || ARRAY(SELECT f.familiar_id FROM familiar f
+                  WHERE f.vecino_id = ve.id AND f.estado = 'ACEPTADO' AND f.recibe_avisos) AS destinatarios
+FROM parada p
+JOIN suscripcion s  ON s.vendedor_id = p.vendedor_id AND s.activa
+JOIN usuario     ve ON ve.id = s.vecino_id AND ve.activo AND ve.municipio_id = p.municipio_id
+WHERE p.fecha = (now() AT TIME ZONE 'Europe/Madrid')::date
+  AND p.estado IN ('PREVISTA', 'EN_CAMINO')
+  AND s.ultimo_aviso IS DISTINCT FROM p.fecha;
 
--- Quién debe recibir el aviso de llegada de cada paso_parada pendiente:
--- el propio vecino (si tiene cuenta) y sus familiares con recibe_avisos.
-CREATE VIEW v_destinatarios_llegada AS
-SELECT
-    pp.id                                            AS paso_parada_id,
-    s.vecino_id,
-    dest.usuario_id,
-    pp.hora_estimada - make_interval(mins => s.minutos_antelacion) AS hora_aviso,
-    'LLEGADA_PROXIMA:' || pp.id || ':' || dest.usuario_id          AS clave_deduplicacion
-FROM paso_parada pp
-JOIN jornada     j  ON j.id = pp.jornada_id
-JOIN parada      p  ON p.id = pp.parada_id
-JOIN ruta        r  ON r.id = j.ruta_id
-JOIN suscripcion s  ON s.vendedor_id = r.vendedor_id AND s.activa
-JOIN vecino      ve ON ve.id = s.vecino_id AND ve.activo
-                   AND ve.municipio_id = p.municipio_id
-                   AND (s.parada_id IS NULL OR s.parada_id = p.id)
-CROSS JOIN LATERAL (
-    SELECT ve.usuario_id WHERE ve.usuario_id IS NOT NULL
-    UNION
-    SELECT fv.familiar_usuario_id
-    FROM familiar_vecino fv
-    WHERE fv.vecino_id = ve.id AND fv.estado = 'ACEPTADA' AND fv.recibe_avisos
-) AS dest (usuario_id)
-WHERE pp.estado = 'PENDIENTE'
-  AND j.estado IN ('PROGRAMADA', 'EN_CURSO');
-
-COMMENT ON VIEW v_destinatarios_llegada IS 'La usa la tarea programada: cada minuto busca filas con hora_aviso <= now() y crea la notificación (la clave evita duplicados).';
+COMMENT ON VIEW v_servicios_hoy   IS 'Qué vendedores pasan hoy por cada pueblo, a qué hora estimada y cómo van.';
+COMMENT ON VIEW v_consultas_hoy   IS 'Consulta médica de hoy por pueblo; situacion = NORMAL, CAMBIO o CANCELADA.';
+COMMENT ON VIEW v_avisos_vigentes IS 'Avisos del ayuntamiento que se ven ahora en cada pueblo.';
+COMMENT ON VIEW v_encargos_parada IS 'Encargos con el nombre del vecino y un resumen de productos, para el vendedor.';
+COMMENT ON VIEW v_avisos_llegada  IS 'A quién avisar de cada llegada y a qué hora (vecino y familiares). La lee la tarea programada.';

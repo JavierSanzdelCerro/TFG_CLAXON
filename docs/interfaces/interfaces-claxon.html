@@ -547,7 +547,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <a class="boton"><svg class="i s" aria-hidden="true"><use href="#i-shopping-basket"/></svg> Encargar al horno</a>
         </div>
       </div></div>
-      <figcaption><b>06 · Vecino</b><strong>Detalle de un servicio</strong><span>Recorrido de hoy con las paradas hechas y las que faltan (<code>paso_parada</code>). Deja claro que es una estimación, no GPS.</span></figcaption>
+      <figcaption><b>06 · Vecino</b><strong>Detalle de un servicio</strong><span>Recorrido de hoy con las paradas hechas y las que faltan (estado de hoy de cada <code>parada</code>). Deja claro que es una estimación, no GPS.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="07-vecino-encargo-catalogo">
@@ -597,7 +597,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton"><svg class="i s" aria-hidden="true"><use href="#i-send"/></svg> Enviar encargo</a></div>
       </div></div>
-      <figcaption><b>08 · Vecino</b><strong>Revisar y enviar</strong><span>Resumen, lugar de recogida (<code>entrega_a_domicilio</code>) y nota. Sin pagos dentro de la app: se paga en mano, como ahora.</span></figcaption>
+      <figcaption><b>08 · Vecino</b><strong>Revisar y enviar</strong><span>Resumen, lugar de recogida (<code>a_domicilio</code>) y nota. Sin pagos dentro de la app: se paga en mano, como ahora.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="09-vecino-encargo-enviado">
@@ -621,7 +621,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <a class="boton sec">Volver a Hoy</a>
         </div>
       </div></div>
-      <figcaption><b>09 · Vecino</b><strong>Encargo enviado</strong><span>Confirmación clara. Recuerda que el familiar vinculado también lo ve (<code>familiar_vecino.recibe_avisos</code>).</span></figcaption>
+      <figcaption><b>09 · Vecino</b><strong>Encargo enviado</strong><span>Confirmación clara. Recuerda que el familiar vinculado también lo ve (<code>familiar.recibe_avisos</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="10-vecino-mis-encargos">
@@ -651,7 +651,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <nav class="nav"><a class=""><svg class="i" aria-hidden="true"><use href="#i-house"/></svg><span>Hoy</span></a><a class="activo"><svg class="i" aria-hidden="true"><use href="#i-shopping-basket"/></svg><span class="globo">2</span><span>Encargos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><span class="globo">1</span><span>Avisos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Familia</span></a></nav>
       </div></div>
-      <figcaption><b>10 · Vecino</b><strong>Mis encargos</strong><span>Agrupados por día con su estado en color y texto. Si lo pidió un familiar, se dice (<code>creado_por_usuario_id</code>).</span></figcaption>
+      <figcaption><b>10 · Vecino</b><strong>Mis encargos</strong><span>Agrupados por día con su estado en color y texto. Si lo pidió un familiar, se dice (<code>creado_por_id</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="11-vecino-encargo-detalle">
@@ -681,7 +681,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton sec"><svg class="i s" aria-hidden="true"><use href="#i-phone"/></svg> Llamar al horno</a></div>
       </div></div>
-      <figcaption><b>11 · Vecino</b><strong>Detalle del encargo</strong><span>Cada paso sale de <code>historial_encargo</code>, que rellena un trigger. Explica por qué no se puede cancelar en vez de esconder el botón.</span></figcaption>
+      <figcaption><b>11 · Vecino</b><strong>Detalle del encargo</strong><span>Cada paso es una fecha del encargo (<code>fecha_aceptado</code>, <code>fecha_preparado</code>...) que rellena un trigger. Explica por qué no se puede cancelar en vez de esconder el botón.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="12-vecino-avisos">
@@ -724,7 +724,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton sec">Ver el horario de la semana</a></div>
       </div></div>
-      <figcaption><b>13 · Vecino</b><strong>Detalle de un aviso</strong><span>Lo publica el ayuntamiento al registrar un cambio (<code>incidencia_consulta</code> + <code>aviso</code>). Lo importante en texto grande y en dos datos: dónde y cuándo.</span></figcaption>
+      <figcaption><b>13 · Vecino</b><strong>Detalle de un aviso</strong><span>Lo publica el ayuntamiento al registrar un cambio (una fila de <code>consulta</code> con fecha + un <code>aviso</code>). Lo importante en texto grande y en dos datos: dónde y cuándo.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="14-vecino-consultas">
@@ -747,7 +747,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <nav class="nav"><a class=""><svg class="i" aria-hidden="true"><use href="#i-house"/></svg><span>Hoy</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-shopping-basket"/></svg><span class="globo">2</span><span>Encargos</span></a><a class="activo"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><span class="globo">1</span><span>Avisos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Familia</span></a></nav>
       </div></div>
-      <figcaption><b>14 · Vecino</b><strong>Horario de consulta</strong><span>Semana tipo (<code>consulta_medica</code>) con el cambio de hoy encima (vista <code>v_consultas_hoy</code>).</span></figcaption>
+      <figcaption><b>14 · Vecino</b><strong>Horario de consulta</strong><span>Semana tipo (filas de <code>consulta</code> con día de la semana) con el cambio de hoy encima (vista <code>v_consultas_hoy</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="15-vecino-familia">
@@ -772,7 +772,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         <div class="pie-acciones" style="border:0;padding-bottom:12px"><a class="boton sec"><svg class="i s" aria-hidden="true"><use href="#i-share-2"/></svg> Enviar el código</a></div>
         <nav class="nav"><a class=""><svg class="i" aria-hidden="true"><use href="#i-house"/></svg><span>Hoy</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-shopping-basket"/></svg><span class="globo">2</span><span>Encargos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><span class="globo">1</span><span>Avisos</span></a><a class="activo"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>Familia</span></a></nav>
       </div></div>
-      <figcaption><b>15 · Vecino</b><strong>Familia</strong><span>Quién ayuda a María y qué puede hacer (<code>familiar_vecino</code>). Se vincula con un código de 6 caracteres, sin compartir la contraseña.</span></figcaption>
+      <figcaption><b>15 · Vecino</b><strong>Familia</strong><span>Quién ayuda a María y qué puede hacer (<code>familiar</code>). Se vincula con su <code>codigo_familia</code> de 6 caracteres, sin compartir la contraseña.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="16-vecino-ajustes">
@@ -819,7 +819,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <span class="circulo" style="background:rgba(255,255,255,.15);color:#fff"><svg class="i s" aria-hidden="true"><use href="#i-camera"/></svg></span>
         </div>
       </div></div>
-      <figcaption><b>17 · Vecino y familiar</b><strong>Notificaciones push</strong><span>Lo que llega por Firebase Cloud Messaging. Un aviso por evento: la <code>clave_deduplicacion</code> evita repetidos.</span></figcaption>
+      <figcaption><b>17 · Vecino y familiar</b><strong>Notificaciones push</strong><span>Lo que llega por Firebase Cloud Messaging. Un aviso por llegada y día: <code>suscripcion.ultimo_aviso</code> evita repetidos.</span></figcaption>
     </figure>
   </div>
 </section>
@@ -884,7 +884,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <a class="boton"><svg class="i s" aria-hidden="true"><use href="#i-shopping-basket"/></svg> Encargar para Joaquín</a>
         </div>
       </div></div>
-      <figcaption><b>19 · Familiar</b><strong>Familiar sin móvil</strong><span>Un <code>vecino</code> sin <code>usuario</code>. Se guarda si necesita que le lleven las cosas a casa y una nota para el vendedor, sin datos de salud.</span></figcaption>
+      <figcaption><b>19 · Familiar</b><strong>Familiar sin móvil</strong><span>Un <code>usuario</code> VECINO sin contraseña. Se guarda si necesita que le lleven las cosas a casa y una nota para el vendedor, sin datos de salud.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="20-familiar-vincular">
@@ -906,7 +906,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton">Enviar solicitud</a></div>
       </div></div>
-      <figcaption><b>20 · Familiar</b><strong>Vincular con código</strong><span>Crea la fila de <code>familiar_vecino</code> en estado PENDIENTE hasta que el vecino acepta.</span></figcaption>
+      <figcaption><b>20 · Familiar</b><strong>Vincular con código</strong><span>Busca al vecino por su <code>codigo_familia</code> y crea la fila de <code>familiar</code> en PENDIENTE hasta que acepta.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="21-familiar-crear-perfil">
@@ -926,7 +926,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton">Crear perfil</a></div>
       </div></div>
-      <figcaption><b>21 · Familiar</b><strong>Crear perfil sin móvil</strong><span>Da de alta a un vecino que no usará la app. Queda vinculado al familiar como ACEPTADA directamente.</span></figcaption>
+      <figcaption><b>21 · Familiar</b><strong>Crear perfil sin móvil</strong><span>Da de alta a un vecino que no usará la app. Es un <code>usuario</code> sin contraseña, vinculado al familiar como ACEPTADO.</span></figcaption>
     </figure>
   </div>
 </section>
@@ -949,7 +949,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         <div class="cuerpo" style="gap:14px">
           <div class="tarjeta" style="gap:12px">
             <div class="fila" style="justify-content:space-between"><b class="titulo-m">Ruta del pan</b><span class="pill">Salida 9:45</span></div>
-            <div class="fila texto-t peq" style="gap:16px"><span>4 paradas</span><span>4 encargos</span><span>6 vecinos suscritos</span></div>
+            <div class="fila texto-t peq" style="gap:16px"><span>4 paradas</span><span>4 encargos</span><span>5 vecinos suscritos</span></div>
             <ol class="tiempo">
               <li><span class="h">10:00</span><span class="eje pendiente"><i></i></span><span class="d"><b>Martín del Río</b><span>Sin encargos</span></span></li>
               <li><span class="h">10:40</span><span class="eje pendiente"><i></i></span><span class="d"><b>Fuenferrada</b><span>2 encargos · 1 sin aceptar</span></span></li>
@@ -962,7 +962,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <nav class="nav"><a class="activo"><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg><span>Hoy</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-shopping-basket"/></svg><span class="globo">2</span><span>Encargos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-route"/></svg><span>Rutas</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-package"/></svg><span>Catálogo</span></a></nav>
       </div></div>
-      <figcaption><b>22 · Vendedor</b><strong>Antes de salir</strong><span>Resumen de la ruta del día. «Iniciar ruta» crea la <code>jornada</code> y calcula las horas estimadas de cada <code>paso_parada</code>.</span></figcaption>
+      <figcaption><b>22 · Vendedor</b><strong>Antes de salir</strong><span>Resumen de la ruta del día. «Iniciar ruta» calcula la hora estimada de cada <code>parada</code> con la hora real de salida.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="23-vendedor-ruta-en-curso">
@@ -973,7 +973,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <div class="tarjeta oscura" style="gap:6px">
             <span class="eti" style="color:#C9CDD6">Siguiente parada</span>
             <div class="fila" style="justify-content:space-between;align-items:baseline"><b style="font:700 28px/1.1 var(--f-display)">Fuenferrada</b><b class="num" style="font:700 30px/1 var(--f-display)">10:40</b></div>
-            <p style="color:#D9DCE3;font-size:15.5px">Plaza · 2 encargos · 3 personas avisadas a las 10:25</p>
+            <p style="color:#D9DCE3;font-size:15.5px">Plaza · 2 encargos · 3 personas reciben aviso</p>
           </div>
           <a class="boton gigante ok"><svg class="i l" aria-hidden="true"><use href="#i-map-pin"/></svg> He llegado a Fuenferrada</a>
           <ol class="tiempo">
@@ -986,7 +986,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <nav class="nav"><a class="activo"><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg><span>Hoy</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-shopping-basket"/></svg><span class="globo">2</span><span>Encargos</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-route"/></svg><span>Rutas</span></a><a class=""><svg class="i" aria-hidden="true"><use href="#i-package"/></svg><span>Catálogo</span></a></nav>
       </div></div>
-      <figcaption><b>23 · Vendedor</b><strong>Ruta en curso</strong><span>Un solo botón grande para la siguiente parada. Al pulsarlo se guarda <code>hora_llegada_real</code> y los vecinos ven «Ha llegado».</span></figcaption>
+      <figcaption><b>23 · Vendedor</b><strong>Ruta en curso</strong><span>Un solo botón grande para la siguiente parada. Al pulsarlo se guarda <code>parada.hora_llegada</code> y los vecinos ven «Ha llegado».</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="24-vendedor-retraso">
@@ -1012,7 +1012,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <button class="enlace" style="justify-self:center;color:var(--a-error)">Hoy no puedo hacer la ruta</button>
         </div>
       </div></div>
-      <figcaption><b>24 · Vendedor</b><strong>Avisar de un retraso</strong><span>Suma minutos a <code>jornada.retraso_minutos</code> y recalcula todas las horas que faltan. También permite cancelar la ruta del día.</span></figcaption>
+      <figcaption><b>24 · Vendedor</b><strong>Avisar de un retraso</strong><span>Suma los minutos a la <code>hora_estimada</code> de las paradas que faltan. También permite cancelar la ruta del día.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="25-vendedor-en-parada">
@@ -1087,7 +1087,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-acciones"><a class="boton">Guardar ruta</a></div>
       </div></div>
-      <figcaption><b>27 · Vendedor</b><strong>Editar ruta</strong><span>Días (<code>ruta_dia</code>), hora de salida y paradas con los minutos desde la salida (<code>parada.minutos_desde_salida</code>). Así se calculan las horas estimadas.</span></figcaption>
+      <figcaption><b>27 · Vendedor</b><strong>Editar ruta</strong><span>Días (<code>dias_reparto</code>), hora de salida y paradas con los minutos desde la salida (<code>parada.minutos_desde_salida</code>). Así se calculan las horas estimadas.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="28-vendedor-catalogo">
@@ -1177,7 +1177,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           </div>
         </div></div>
       </div></div>
-      <figcaption><b>29 · Ayuntamiento</b><strong>Inicio del panel</strong><span>Resumen del pueblo elegido (Ana gestiona tres: <code>gestor_municipal</code> es N:M). Lo de hoy, los avisos publicados y la consulta de la semana.</span></figcaption>
+      <figcaption><b>29 · Ayuntamiento</b><strong>Inicio del panel</strong><span>Resumen del pueblo elegido (Ana es la gestora de tres: <code>municipio.gestor_id</code>). Lo de hoy, los avisos publicados y la consulta de la semana.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="30-ayuntamiento-nuevo-aviso">
@@ -1223,7 +1223,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           </div>
         </div></div>
       </div></div>
-      <figcaption><b>30 · Ayuntamiento</b><strong>Escribir un aviso</strong><span>Formulario con vista previa de cómo llegará al móvil y al tablón. Puede ir a varios pueblos a la vez (<code>aviso_municipio</code>) y guardarse como borrador.</span></figcaption>
+      <figcaption><b>30 · Ayuntamiento</b><strong>Escribir un aviso</strong><span>Formulario con vista previa de cómo llegará al móvil y al tablón. Si va a varios pueblos se guarda un <code>aviso</code> por pueblo. Se puede dejar como borrador.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="31-ayuntamiento-consulta">
@@ -1242,7 +1242,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
                 <div>11:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                 <div>12:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
               </div>
-              <p class="peq texto-t">Centro de salud de referencia: Utrillas. El horario habitual sale de <code>consulta_medica</code>; los cambios puntuales, de <code>incidencia_consulta</code>.</p>
+              <p class="peq texto-t">Centro de salud de referencia: Utrillas. Todo sale de la tabla <code>consulta</code>: el horario habitual (con día de la semana) y los cambios de un día (con fecha).</p>
             </div>
             <div class="tarjeta" style="padding:20px;gap:14px;align-content:start">
               <div><span class="eti acento">Registrar un cambio</span><h2 class="titulo-m" style="margin-top:4px">Medicina · lunes 19, 9:30 a 10:30</h2></div>
@@ -1312,9 +1312,9 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
           <div class="contenido-web">
             <div class="kpis">
               <div class="kpi"><span class="eti">Pueblos</span><b>5</b><span>4 con servicios esta semana</span></div>
-              <div class="kpi"><span class="eti">Usuarios</span><b>11</b><span>6 vecinos · 1 familiar · 3 vendedores</span></div>
+              <div class="kpi"><span class="eti">Usuarios</span><b>12</b><span>5 vecinos · 1 familiar · 3 vendedores</span></div>
               <div class="kpi"><span class="eti">Encargos hoy</span><b>5</b><span>2 sin aceptar</span></div>
-              <div class="kpi"><span class="eti">Notificaciones hoy</span><b>6</b><span>1 pendiente · 0 fallidas</span></div>
+              <div class="kpi"><span class="eti">Avisos de llegada</span><b>6</b><span>1 enviado · 5 programados</span></div>
             </div>
             <div class="columnas-web" style="grid-template-columns:1.5fr 1fr">
               <div class="tarjeta" style="padding:20px;gap:14px">
@@ -1323,7 +1323,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
                   <thead><tr><th>Pueblo</th><th class="num">Vecinos</th><th>Servicios</th><th>Tablón</th><th>Gestiona</th></tr></thead>
                   <tbody>
                     <tr><td><b>Fuenferrada</b></td><td class="num">2</td><td>Pan · Pescado · Fruta</td><td><span class="pill ok">En línea</span></td><td>Ana Martín</td></tr>
-                    <tr><td><b>Martín del Río</b></td><td class="num">2</td><td>Pan · Pescado · Fruta</td><td><span class="pill pend">Hace 2 días</span></td><td>Luis Navarro</td></tr>
+                    <tr><td><b>Martín del Río</b></td><td class="num">1</td><td>Pan · Pescado · Fruta</td><td><span class="pill pend">Hace 2 días</span></td><td>Luis Navarro</td></tr>
                     <tr><td><b>Segura de los Baños</b></td><td class="num">1</td><td>Pan · Pescado · Fruta</td><td><span class="pill ok">En línea</span></td><td>Ana Martín</td></tr>
                     <tr><td><b>La Hoz de la Vieja</b></td><td class="num">1</td><td>Pan · Fruta</td><td class="texto-t">Sin tablón</td><td>Ana Martín</td></tr>
                     <tr><td><b>Utrillas</b></td><td class="num">0</td><td class="texto-t">Salen de aquí</td><td class="texto-t">Sin tablón</td><td class="texto-t">—</td></tr>
@@ -1339,17 +1339,17 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
                 </div>
                 <div class="tarjeta" style="padding:20px;gap:10px">
                   <h2 class="titulo-m">Avisos al móvil hoy</h2>
-                  <div class="fila" style="justify-content:space-between"><span>Enviados</span><b class="num">5</b></div>
-                  <div class="fila" style="justify-content:space-between"><span>Pendientes (Manuel, 10:30)</span><b class="num">1</b></div>
-                  <div class="fila" style="justify-content:space-between"><span>Fallidos</span><b class="num">0</b></div>
-                  <p class="peq texto-t">Duplicados evitados por la clave única: 0</p>
+                  <div class="fila" style="justify-content:space-between"><span>Llegadas ya avisadas</span><b class="num">1</b></div>
+                  <div class="fila" style="justify-content:space-between"><span>Programadas (la próxima, 10:30)</span><b class="num">5</b></div>
+                  <div class="fila" style="justify-content:space-between"><span>Del ayuntamiento</span><b class="num">1</b></div>
+                  <p class="peq texto-t">Nunca se avisa dos veces de un vendedor el mismo día.</p>
                 </div>
               </div>
             </div>
           </div>
         </div></div>
       </div></div>
-      <figcaption><b>33 · Administración</b><strong>Resumen del piloto</strong><span>Estado de los 5 pueblos, los vendedores y el envío de notificaciones (tabla <code>notificacion</code>: enviadas, pendientes y fallidas).</span></figcaption>
+      <figcaption><b>33 · Administración</b><strong>Resumen del piloto</strong><span>Estado de los 5 pueblos, los vendedores y los avisos de llegada de hoy (<code>suscripcion.ultimo_aviso</code> y vista <code>v_avisos_llegada</code>).</span></figcaption>
     </figure>
   </div>
 </section>
@@ -1382,7 +1382,7 @@ textarea.entrada { padding: 12px 14px; font: 16px/1.4 var(--f-texto); resize: no
         </div>
         <div class="pie-t"><span>Se actualiza solo · Claxon</span><span>¿Quieres los avisos en el móvil? Pregunta en el ayuntamiento</span></div>
       </div></div><div class="pie-tv"></div></div></div>
-      <figcaption><b>34 · Tablón</b><strong>Pantalla del bar</strong><span>Sin usuario ni contraseña: entra con un enlace secreto (<code>pantalla_tablon.token_hash</code>). Junta las vistas <code>v_servicios_hoy</code>, <code>v_consultas_hoy</code> y <code>v_avisos_vigentes</code>.</span></figcaption>
+      <figcaption><b>34 · Tablón</b><strong>Pantalla del bar</strong><span>Sin usuario ni contraseña: entra con un enlace secreto (<code>municipio.tablon_token_hash</code>). Junta las vistas <code>v_servicios_hoy</code>, <code>v_consultas_hoy</code> y <code>v_avisos_vigentes</code>.</span></figcaption>
     </figure>
   </div>
 </section>

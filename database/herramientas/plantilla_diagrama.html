@@ -16,8 +16,7 @@
   --acento-suave: #F4E3DA;
   --fila-activa: #FBEFE9;
 
-  --b-territorio: #8C6A3F;  --b-usuarios: #5A4F96;   --b-vecinos: #B8492B;   --b-vendedores: #2A7C7A;
-  --b-rutas: #B87414;       --b-encargos: #8B3F6E;   --b-ayuntamiento: #2E6F92; --b-avisos: #4E7F3A;
+  --b-personas: #B8492B;  --b-vendedores: #2A7C7A;  --b-encargos: #8B3F6E;  --b-ayuntamiento: #2E6F92;
 
   --f-display: "Fraunces", "Iowan Old Style", Georgia, serif;
   --f-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -27,16 +26,14 @@
   :root:not([data-theme="light"]) {
     --papel: #16181D; --tarjeta: #1F222A; --tinta: #F0EBE3; --tenue: #A5A8B1; --linea: #323642; --linea-fuerte: #5B606E;
     --acento: #E9805F; --acento-suave: #3A2620; --fila-activa: #2E221F;
-    --b-territorio: #C9A271; --b-usuarios: #A69BE0; --b-vecinos: #E9805F; --b-vendedores: #5CC2BE;
-    --b-rutas: #E8A84A; --b-encargos: #D58AB8; --b-ayuntamiento: #6FB2DA; --b-avisos: #8FC36F;
+    --b-personas: #E9805F; --b-vendedores: #5CC2BE; --b-encargos: #D58AB8; --b-ayuntamiento: #6FB2DA;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --papel: #16181D; --tarjeta: #1F222A; --tinta: #F0EBE3; --tenue: #A5A8B1; --linea: #323642; --linea-fuerte: #5B606E;
   --acento: #E9805F; --acento-suave: #3A2620; --fila-activa: #2E221F;
-  --b-territorio: #C9A271; --b-usuarios: #A69BE0; --b-vecinos: #E9805F; --b-vendedores: #5CC2BE;
-  --b-rutas: #E8A84A; --b-encargos: #D58AB8; --b-ayuntamiento: #6FB2DA; --b-avisos: #8FC36F;
+  --b-personas: #E9805F; --b-vendedores: #5CC2BE; --b-encargos: #D58AB8; --b-ayuntamiento: #6FB2DA;
   color-scheme: dark;
 }
 
@@ -100,11 +97,10 @@ h1 { font: 700 clamp(30px, 4.4vw, 50px)/1.05 var(--f-display); margin: 0; text-w
 }
 .medida { position: relative; }
 .lienzo { position: absolute; top: 0; left: 0; transform-origin: 0 0; width: max-content; padding: 26px; display: grid; gap: 34px 46px;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: repeat(2, max-content);
   grid-template-areas:
-    "territorio usuarios vecinos"
-    "vendedores rutas encargos"
-    "ayuntamiento ayuntamiento avisos";
+    "personas vendedores"
+    "encargos ayuntamiento";
 }
 .lienzo svg.calles { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
 
@@ -242,7 +238,7 @@ path.calle { fill: none; stroke: var(--linea-fuerte); stroke-width: 1.2; opacity
     </section>
     <section>
       <h2>Triggers</h2>
-      <p class="pie">Reglas que cruzan varias tablas y no se pueden escribir con un CHECK.</p>
+      <p class="pie">Lo que la base de datos hace sola cuando cambia un dato.</p>
       <div style="overflow-x:auto"><table class="tabla-trig" id="triggers"></table></div>
     </section>
   </div>
@@ -253,7 +249,7 @@ path.calle { fill: none; stroke: var(--linea-fuerte); stroke-width: 1.2; opacity
 <script>
 const MODELO = /*__MODELO__*/null;
 
-const COLUMNAS_BLOQUE = { territorio: 2, usuarios: 2, vecinos: 2, vendedores: 2, rutas: 2, encargos: 2, ayuntamiento: 4, avisos: 2 };
+const COLUMNAS_BLOQUE = { personas: 3, vendedores: 3, encargos: 2, ayuntamiento: 2 };
 const porNombre = Object.fromEntries(MODELO.tablas.map(t => [t.nombre, t]));
 const bloquePorClave = Object.fromEntries(MODELO.bloques.map(b => [b.clave, b]));
 const lienzo = document.getElementById('lienzo');

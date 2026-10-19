@@ -58,7 +58,7 @@
           <a class="boton">[[shopping-basket s]] Encargar para Joaquín</a>
         </div>
       </div></div>
-      <figcaption><b>19 · Familiar</b><strong>Familiar sin móvil</strong><span>Un <code>vecino</code> sin <code>usuario</code>. Se guarda si necesita que le lleven las cosas a casa y una nota para el vendedor, sin datos de salud.</span></figcaption>
+      <figcaption><b>19 · Familiar</b><strong>Familiar sin móvil</strong><span>Un <code>usuario</code> VECINO sin contraseña. Se guarda si necesita que le lleven las cosas a casa y una nota para el vendedor, sin datos de salud.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="20-familiar-vincular">
@@ -80,7 +80,7 @@
         </div>
         <div class="pie-acciones"><a class="boton">Enviar solicitud</a></div>
       </div></div>
-      <figcaption><b>20 · Familiar</b><strong>Vincular con código</strong><span>Crea la fila de <code>familiar_vecino</code> en estado PENDIENTE hasta que el vecino acepta.</span></figcaption>
+      <figcaption><b>20 · Familiar</b><strong>Vincular con código</strong><span>Busca al vecino por su <code>codigo_familia</code> y crea la fila de <code>familiar</code> en PENDIENTE hasta que acepta.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="21-familiar-crear-perfil">
@@ -100,7 +100,7 @@
         </div>
         <div class="pie-acciones"><a class="boton">Crear perfil</a></div>
       </div></div>
-      <figcaption><b>21 · Familiar</b><strong>Crear perfil sin móvil</strong><span>Da de alta a un vecino que no usará la app. Queda vinculado al familiar como ACEPTADA directamente.</span></figcaption>
+      <figcaption><b>21 · Familiar</b><strong>Crear perfil sin móvil</strong><span>Da de alta a un vecino que no usará la app. Es un <code>usuario</code> sin contraseña, vinculado al familiar como ACEPTADO.</span></figcaption>
     </figure>
   </div>
 </section>
@@ -123,7 +123,7 @@
         <div class="cuerpo" style="gap:14px">
           <div class="tarjeta" style="gap:12px">
             <div class="fila" style="justify-content:space-between"><b class="titulo-m">Ruta del pan</b><span class="pill">Salida 9:45</span></div>
-            <div class="fila texto-t peq" style="gap:16px"><span>4 paradas</span><span>4 encargos</span><span>6 vecinos suscritos</span></div>
+            <div class="fila texto-t peq" style="gap:16px"><span>4 paradas</span><span>4 encargos</span><span>5 vecinos suscritos</span></div>
             <ol class="tiempo">
               <li><span class="h">10:00</span><span class="eje pendiente"><i></i></span><span class="d"><b>Martín del Río</b><span>Sin encargos</span></span></li>
               <li><span class="h">10:40</span><span class="eje pendiente"><i></i></span><span class="d"><b>Fuenferrada</b><span>2 encargos · 1 sin aceptar</span></span></li>
@@ -136,7 +136,7 @@
         </div>
         [[NAV-VENDEDOR:hoy]]
       </div></div>
-      <figcaption><b>22 · Vendedor</b><strong>Antes de salir</strong><span>Resumen de la ruta del día. «Iniciar ruta» crea la <code>jornada</code> y calcula las horas estimadas de cada <code>paso_parada</code>.</span></figcaption>
+      <figcaption><b>22 · Vendedor</b><strong>Antes de salir</strong><span>Resumen de la ruta del día. «Iniciar ruta» calcula la hora estimada de cada <code>parada</code> con la hora real de salida.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="23-vendedor-ruta-en-curso">
@@ -147,7 +147,7 @@
           <div class="tarjeta oscura" style="gap:6px">
             <span class="eti" style="color:#C9CDD6">Siguiente parada</span>
             <div class="fila" style="justify-content:space-between;align-items:baseline"><b style="font:700 28px/1.1 var(--f-display)">Fuenferrada</b><b class="num" style="font:700 30px/1 var(--f-display)">10:40</b></div>
-            <p style="color:#D9DCE3;font-size:15.5px">Plaza · 2 encargos · 3 personas avisadas a las 10:25</p>
+            <p style="color:#D9DCE3;font-size:15.5px">Plaza · 2 encargos · 3 personas reciben aviso</p>
           </div>
           <a class="boton gigante ok">[[map-pin l]] He llegado a Fuenferrada</a>
           <ol class="tiempo">
@@ -160,7 +160,7 @@
         </div>
         [[NAV-VENDEDOR:hoy]]
       </div></div>
-      <figcaption><b>23 · Vendedor</b><strong>Ruta en curso</strong><span>Un solo botón grande para la siguiente parada. Al pulsarlo se guarda <code>hora_llegada_real</code> y los vecinos ven «Ha llegado».</span></figcaption>
+      <figcaption><b>23 · Vendedor</b><strong>Ruta en curso</strong><span>Un solo botón grande para la siguiente parada. Al pulsarlo se guarda <code>parada.hora_llegada</code> y los vecinos ven «Ha llegado».</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="24-vendedor-retraso">
@@ -186,7 +186,7 @@
           <button class="enlace" style="justify-self:center;color:var(--a-error)">Hoy no puedo hacer la ruta</button>
         </div>
       </div></div>
-      <figcaption><b>24 · Vendedor</b><strong>Avisar de un retraso</strong><span>Suma minutos a <code>jornada.retraso_minutos</code> y recalcula todas las horas que faltan. También permite cancelar la ruta del día.</span></figcaption>
+      <figcaption><b>24 · Vendedor</b><strong>Avisar de un retraso</strong><span>Suma los minutos a la <code>hora_estimada</code> de las paradas que faltan. También permite cancelar la ruta del día.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="25-vendedor-en-parada">
@@ -261,7 +261,7 @@
         </div>
         <div class="pie-acciones"><a class="boton">Guardar ruta</a></div>
       </div></div>
-      <figcaption><b>27 · Vendedor</b><strong>Editar ruta</strong><span>Días (<code>ruta_dia</code>), hora de salida y paradas con los minutos desde la salida (<code>parada.minutos_desde_salida</code>). Así se calculan las horas estimadas.</span></figcaption>
+      <figcaption><b>27 · Vendedor</b><strong>Editar ruta</strong><span>Días (<code>dias_reparto</code>), hora de salida y paradas con los minutos desde la salida (<code>parada.minutos_desde_salida</code>). Así se calculan las horas estimadas.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="28-vendedor-catalogo">

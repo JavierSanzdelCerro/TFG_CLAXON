@@ -27,17 +27,19 @@ Fuera del alcance (decirlo en la memoria como «trabajo futuro»): pagos en la a
   - FCM guarda el aviso y lo entrega cuando vuelve la señal (por eso conviene avisar 15 min antes y no 2).
   - El tablón del bar y los familiares cubren a quien no tiene buena señal.
   - Trabajo futuro: avisos por SMS para quien lo pida.
-- **«¿Por qué no GPS?»** Porque gasta batería, necesita permisos y cobertura constante, y para avisar con 15 minutos de margen basta con la salida real más el tiempo habitual. La base de datos guarda la hora estimada y la real de cada parada, así que más adelante se puede calcular el retraso medio de cada parada y afinar la estimación.
+- **«¿Por qué no GPS?»** Porque gasta batería, necesita permisos y cobertura constante, y para avisar con 15 minutos de margen basta con la salida real más el tiempo habitual. Cada parada guarda la hora estimada y la real del día; si más adelante se quiere calcular el retraso medio, basta con añadir una tabla de histórico.
 - **«¿Y los datos médicos?»** No se guardan. Solo días, horas y lugares de consulta. El motivo de un cambio es genérico.
 
 ## 4. Privacidad (RGPD)
 
 - Pantalla de consentimiento en el registro y política de privacidad sencilla.
 - El teléfono y la dirección del vecino solo los ve el vendedor al que le ha hecho un encargo.
-- Opción de borrar la cuenta (la base de datos ya permite desactivar sin perder el histórico).
+- Opción de borrar la cuenta (la base de datos permite desactivarla con `usuario.activo` sin perder sus encargos).
 - Un familiar solo queda vinculado cuando el vecino acepta, salvo que el familiar cree el perfil de alguien sin móvil.
 
-## 5. Mejoras pequeñas que se podrían añadir a la base de datos
+## 5. Mejoras que se podrían añadir a la base de datos
+
+La base de datos tiene 10 tablas a propósito. Si alguna de estas ideas hace falta, se añade con una migración nueva.
 
 - **Verificar vendedores y gestores municipales** (campo `verificado_en` y quién lo verificó), para que nadie se haga pasar por el ayuntamiento.
 - **Preferencias de aviso del familiar**: ahora recibe todo lo de su familiar; se podría elegir solo encargos o solo cambios de consulta.

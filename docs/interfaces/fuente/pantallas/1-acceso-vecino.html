@@ -182,7 +182,7 @@
           <a class="boton">[[shopping-basket s]] Encargar al horno</a>
         </div>
       </div></div>
-      <figcaption><b>06 · Vecino</b><strong>Detalle de un servicio</strong><span>Recorrido de hoy con las paradas hechas y las que faltan (<code>paso_parada</code>). Deja claro que es una estimación, no GPS.</span></figcaption>
+      <figcaption><b>06 · Vecino</b><strong>Detalle de un servicio</strong><span>Recorrido de hoy con las paradas hechas y las que faltan (estado de hoy de cada <code>parada</code>). Deja claro que es una estimación, no GPS.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="07-vecino-encargo-catalogo">
@@ -232,7 +232,7 @@
         </div>
         <div class="pie-acciones"><a class="boton">[[send s]] Enviar encargo</a></div>
       </div></div>
-      <figcaption><b>08 · Vecino</b><strong>Revisar y enviar</strong><span>Resumen, lugar de recogida (<code>entrega_a_domicilio</code>) y nota. Sin pagos dentro de la app: se paga en mano, como ahora.</span></figcaption>
+      <figcaption><b>08 · Vecino</b><strong>Revisar y enviar</strong><span>Resumen, lugar de recogida (<code>a_domicilio</code>) y nota. Sin pagos dentro de la app: se paga en mano, como ahora.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="09-vecino-encargo-enviado">
@@ -256,7 +256,7 @@
           <a class="boton sec">Volver a Hoy</a>
         </div>
       </div></div>
-      <figcaption><b>09 · Vecino</b><strong>Encargo enviado</strong><span>Confirmación clara. Recuerda que el familiar vinculado también lo ve (<code>familiar_vecino.recibe_avisos</code>).</span></figcaption>
+      <figcaption><b>09 · Vecino</b><strong>Encargo enviado</strong><span>Confirmación clara. Recuerda que el familiar vinculado también lo ve (<code>familiar.recibe_avisos</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="10-vecino-mis-encargos">
@@ -286,7 +286,7 @@
         </div>
         [[NAV-VECINO:encargos]]
       </div></div>
-      <figcaption><b>10 · Vecino</b><strong>Mis encargos</strong><span>Agrupados por día con su estado en color y texto. Si lo pidió un familiar, se dice (<code>creado_por_usuario_id</code>).</span></figcaption>
+      <figcaption><b>10 · Vecino</b><strong>Mis encargos</strong><span>Agrupados por día con su estado en color y texto. Si lo pidió un familiar, se dice (<code>creado_por_id</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="11-vecino-encargo-detalle">
@@ -316,7 +316,7 @@
         </div>
         <div class="pie-acciones"><a class="boton sec">[[phone s]] Llamar al horno</a></div>
       </div></div>
-      <figcaption><b>11 · Vecino</b><strong>Detalle del encargo</strong><span>Cada paso sale de <code>historial_encargo</code>, que rellena un trigger. Explica por qué no se puede cancelar en vez de esconder el botón.</span></figcaption>
+      <figcaption><b>11 · Vecino</b><strong>Detalle del encargo</strong><span>Cada paso es una fecha del encargo (<code>fecha_aceptado</code>, <code>fecha_preparado</code>...) que rellena un trigger. Explica por qué no se puede cancelar en vez de esconder el botón.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="12-vecino-avisos">
@@ -359,7 +359,7 @@
         </div>
         <div class="pie-acciones"><a class="boton sec">Ver el horario de la semana</a></div>
       </div></div>
-      <figcaption><b>13 · Vecino</b><strong>Detalle de un aviso</strong><span>Lo publica el ayuntamiento al registrar un cambio (<code>incidencia_consulta</code> + <code>aviso</code>). Lo importante en texto grande y en dos datos: dónde y cuándo.</span></figcaption>
+      <figcaption><b>13 · Vecino</b><strong>Detalle de un aviso</strong><span>Lo publica el ayuntamiento al registrar un cambio (una fila de <code>consulta</code> con fecha + un <code>aviso</code>). Lo importante en texto grande y en dos datos: dónde y cuándo.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="14-vecino-consultas">
@@ -382,7 +382,7 @@
         </div>
         [[NAV-VECINO:avisos]]
       </div></div>
-      <figcaption><b>14 · Vecino</b><strong>Horario de consulta</strong><span>Semana tipo (<code>consulta_medica</code>) con el cambio de hoy encima (vista <code>v_consultas_hoy</code>).</span></figcaption>
+      <figcaption><b>14 · Vecino</b><strong>Horario de consulta</strong><span>Semana tipo (filas de <code>consulta</code> con día de la semana) con el cambio de hoy encima (vista <code>v_consultas_hoy</code>).</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="15-vecino-familia">
@@ -407,7 +407,7 @@
         <div class="pie-acciones" style="border:0;padding-bottom:12px"><a class="boton sec">[[share-2 s]] Enviar el código</a></div>
         [[NAV-VECINO:familia]]
       </div></div>
-      <figcaption><b>15 · Vecino</b><strong>Familia</strong><span>Quién ayuda a María y qué puede hacer (<code>familiar_vecino</code>). Se vincula con un código de 6 caracteres, sin compartir la contraseña.</span></figcaption>
+      <figcaption><b>15 · Vecino</b><strong>Familia</strong><span>Quién ayuda a María y qué puede hacer (<code>familiar</code>). Se vincula con su <code>codigo_familia</code> de 6 caracteres, sin compartir la contraseña.</span></figcaption>
     </figure>
 
     <figure class="pantalla" data-png="16-vecino-ajustes">
@@ -454,7 +454,7 @@
           <span class="circulo" style="background:rgba(255,255,255,.15);color:#fff">[[camera s]]</span>
         </div>
       </div></div>
-      <figcaption><b>17 · Vecino y familiar</b><strong>Notificaciones push</strong><span>Lo que llega por Firebase Cloud Messaging. Un aviso por evento: la <code>clave_deduplicacion</code> evita repetidos.</span></figcaption>
+      <figcaption><b>17 · Vecino y familiar</b><strong>Notificaciones push</strong><span>Lo que llega por Firebase Cloud Messaging. Un aviso por llegada y día: <code>suscripcion.ultimo_aviso</code> evita repetidos.</span></figcaption>
     </figure>
   </div>
 </section>
