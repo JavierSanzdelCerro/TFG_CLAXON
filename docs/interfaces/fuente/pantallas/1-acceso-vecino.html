@@ -1,0 +1,460 @@
+<section class="grupo" id="acceso">
+  <header>
+    <div class="ceja">App móvil · Flutter</div>
+    <h2>Acceso y primeros pasos</h2>
+    <p>Lo primero que ve cualquier persona. Pocos pasos, letra grande y entrada con teléfono, porque mucha gente mayor no usa el correo.</p>
+  </header>
+  <div class="pantallas">
+
+    <figure class="pantalla" data-png="01-bienvenida">
+      <div class="movil"><div class="pantalla-app" style="background:var(--a-acento);color:#fff">
+        [[ESTADO]]
+        <div class="cuerpo" style="justify-content:space-between;padding:30px 28px 36px">
+          <div style="display:grid;gap:22px;margin-top:40px">
+            <div style="width:72px;height:72px;border-radius:20px;background:#fff;color:var(--a-acento);display:grid;place-items:center">[[volume-2 l]]</div>
+            <div>
+              <div style="font:700 70px/1 var(--f-display);letter-spacing:-.01em">Claxon</div>
+              <div style="font:italic 500 26px/1.25 var(--f-display);margin-top:12px">El radar de lo que pasa por tu pueblo</div>
+            </div>
+            <p style="font-size:18px;line-height:1.5;opacity:.95">Te avisa cuando llega el panadero, el pescadero o hay cambios en la consulta, y te deja hacer encargos antes de que lleguen.</p>
+            <div style="display:flex;gap:12px;margin-top:6px">
+              <span class="circulo" style="background:rgba(255,255,255,.16);color:#fff">[[croissant]]</span>
+              <span class="circulo" style="background:rgba(255,255,255,.16);color:#fff">[[fish]]</span>
+              <span class="circulo" style="background:rgba(255,255,255,.16);color:#fff">[[apple]]</span>
+              <span class="circulo" style="background:rgba(255,255,255,.16);color:#fff">[[stethoscope]]</span>
+              <span class="circulo" style="background:rgba(255,255,255,.16);color:#fff">[[megaphone]]</span>
+            </div>
+          </div>
+          <div style="display:grid;gap:12px">
+            <a class="boton" style="background:#fff;color:var(--a-acento)">Entrar</a>
+            <a class="boton" style="background:transparent;border:2px solid rgba(255,255,255,.7)">Crear una cuenta</a>
+            <a style="color:#fff;text-align:center;font-weight:600;padding-top:8px;text-decoration:underline;text-underline-offset:4px">Quiero ayudar a un familiar</a>
+          </div>
+        </div>
+      </div></div>
+      <figcaption><b>01 · Todos</b><strong>Bienvenida</strong><span>Portada con la identidad de la presentación. Tres caminos: entrar, crear cuenta o entrar como familiar.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="02-entrar">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span></div>
+        <div class="cuerpo" style="gap:22px">
+          <div style="display:grid;gap:8px">
+            <h1 class="titulo-g">Entrar en Claxon</h1>
+            <p class="texto-t">Con tu teléfono o tu correo.</p>
+          </div>
+          <div class="campo"><label>Teléfono o correo</label><div class="entrada">[[smartphone s]]<span>600 111 222</span></div></div>
+          <div class="campo"><label>Contraseña</label><div class="entrada foco"><span style="letter-spacing:.2em;flex:1">•••••••••••</span>[[eye s]]</div></div>
+          <a class="boton">Entrar</a>
+          <button class="enlace" style="justify-self:center">He olvidado la contraseña</button>
+          <div class="tarjeta crema" style="margin-top:auto">
+            <div class="fila">[[hand-heart]]<p class="peq">¿Te ayuda un familiar? Él también puede entrar en tu nombre desde su móvil, sin saber tu contraseña.</p></div>
+          </div>
+        </div>
+        <div class="pie-acciones" style="border:0;text-align:center"><p class="peq">¿No tienes cuenta? <span class="enlace">Crear una</span></p></div>
+      </div></div>
+      <figcaption><b>02 · Todos</b><strong>Entrar</strong><span>Teléfono o correo y contraseña. Campos de 56 px de alto y texto a 18 px.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="03-registro-pueblo">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><div class="flex" style="flex:1"></div><span class="eti">Paso 2 de 3</span></div>
+        <div class="cuerpo" style="gap:18px">
+          <div class="progreso"><div class="barra"><i style="width:66%"></i></div></div>
+          <h1 class="titulo-g">¿En qué pueblo vives?</h1>
+          <div class="campo"><div class="entrada">[[search s]]<span class="ph">Buscar pueblo</span></div></div>
+          <div style="display:grid;gap:10px">
+            <div class="radio on"><i></i><div><b>Fuenferrada</b><div class="peq texto-t">Cuencas Mineras · Teruel</div></div></div>
+            <div class="radio"><i></i><div><b>Martín del Río</b><div class="peq texto-t">Cuencas Mineras · Teruel</div></div></div>
+            <div class="radio"><i></i><div><b>Segura de los Baños</b><div class="peq texto-t">Cuencas Mineras · Teruel</div></div></div>
+            <div class="radio"><i></i><div><b>La Hoz de la Vieja</b><div class="peq texto-t">Cuencas Mineras · Teruel</div></div></div>
+            <div class="radio"><i></i><div><b>Utrillas</b><div class="peq texto-t">Cuencas Mineras · Teruel</div></div></div>
+          </div>
+          <p class="peq texto-t">¿No sale tu pueblo? Claxon se está probando en estos cinco. Díselo a tu ayuntamiento.</p>
+        </div>
+        <div class="pie-acciones"><a class="boton">Continuar</a></div>
+      </div></div>
+      <figcaption><b>03 · Vecino</b><strong>Registro: elegir pueblo</strong><span>El pueblo decide qué vendedores y avisos verá. Lista corta: el piloto son 3–4 pueblos.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="04-registro-avisos">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><div style="flex:1"></div><span class="eti">Paso 3 de 3</span></div>
+        <div class="cuerpo" style="gap:16px">
+          <div class="progreso"><div class="barra"><i style="width:100%"></i></div></div>
+          <h1 class="titulo-g">¿De qué te avisamos?</h1>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila"><span class="circulo">[[croissant]]</span><div class="flex"><div class="t1">Pan</div><div class="t2">Horno San Jorge · lunes a sábado</div></div><span class="interruptor on"></span></div>
+            <div class="fila"><span class="circulo azul">[[fish]]</span><div class="flex"><div class="t1">Pescado</div><div class="t2">Pescados Gil · L, X y V</div></div><span class="interruptor on"></span></div>
+            <div class="fila"><span class="circulo verde">[[apple]]</span><div class="flex"><div class="t1">Fruta y verdura</div><div class="t2">Frutas Pilar · martes y jueves</div></div><span class="interruptor"></span></div>
+            <div class="fila"><span class="circulo gris">[[megaphone]]</span><div class="flex"><div class="t1">Ayuntamiento</div><div class="t2">Consulta médica y avisos del pueblo</div></div><span class="interruptor on"></span></div>
+          </div>
+          <div class="campo"><span class="lbl">¿Cuánto antes te avisamos?</span>
+            <div class="segmentos"><span>10 min</span><span class="on">15 min</span><span>30 min</span></div>
+          </div>
+        </div>
+        <div class="pie-acciones">
+          <p class="peq texto-t" style="text-align:center">Ahora el móvil te pedirá permiso para enviarte avisos.</p>
+          <a class="boton">[[bell s]] Activar avisos</a>
+        </div>
+      </div></div>
+      <figcaption><b>04 · Vecino</b><strong>Registro: avisos</strong><span>Crea las suscripciones y la antelación (tabla <code>suscripcion</code>). 15 min por defecto, como en la presentación.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="grupo" id="vecino">
+  <header>
+    <div class="ceja">App móvil · Vecino</div>
+    <h2>María, vecina de Fuenferrada</h2>
+    <p>La persona que vive en el pueblo. Ve lo que pasa hoy, hace encargos y recibe avisos. Todo cabe en cuatro pestañas: Hoy, Encargos, Avisos y Familia.</p>
+  </header>
+  <div class="pantallas">
+
+    <figure class="pantalla" data-png="05-vecino-hoy">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab" style="align-items:flex-start;padding-top:6px">
+          <div style="flex:1;display:grid;gap:4px"><span class="eti acento">Lunes 19 · Fuenferrada</span><h1 class="titulo-g" style="font-size:31px">Buenos días, María</h1></div>
+          <span class="avatar">MP</span>
+        </div>
+        <div class="cuerpo" style="gap:12px">
+          <div class="tarjeta oscura" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><span class="eti" style="color:#C9CDD6">[[stethoscope xs]] Consulta médica</span><span class="pill" style="background:#fff;color:var(--a-tinta)">Cambio</span></div>
+            <b style="font:700 21px/1.2 var(--f-display)">Hoy no hay consulta en el pueblo</b>
+            <p style="color:#D9DCE3;font-size:15.5px">Se pasa en el Centro de Salud de Utrillas, de 9:30 a 10:30.</p>
+          </div>
+          <span class="eti">Hoy pasan</span>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila" style="align-items:flex-start">
+              <span class="circulo">[[croissant]]</span>
+              <div class="flex" style="display:grid;gap:6px">
+                <div class="fila" style="justify-content:space-between"><span class="t1">Pan</span><span class="pill camino"><span class="punto"></span>En camino</span></div>
+                <div class="t2"><b class="num" style="color:var(--a-tinta);font-size:17px">10:40</b> · Plaza · Horno San Jorge</div>
+                <div class="progreso"><div class="barra"><i style="width:38%"></i></div><span class="t2" style="font-size:13px">Salió de Martín del Río a las 10:13</span></div>
+              </div>
+            </div>
+            <div class="fila" style="align-items:flex-start">
+              <span class="circulo azul">[[fish]]</span>
+              <div class="flex" style="display:grid;gap:6px">
+                <div class="fila" style="justify-content:space-between"><span class="t1">Pescado</span><span class="pill">Previsto</span></div>
+                <div class="t2"><b class="num" style="color:var(--a-tinta);font-size:17px">12:15</b> · Plaza · Pescados Gil</div>
+              </div>
+            </div>
+          </div>
+          <div class="tarjeta suave" style="gap:6px">
+            <div class="fila" style="justify-content:space-between"><span class="eti acento">Tu encargo de pan</span><span class="pill ok">[[check xs]] Preparado</span></div>
+            <p style="font-size:16px">Barra de pan ×2 · Tortas de aceite · <b class="num">5,00 €</b></p>
+          </div>
+          <a class="boton" style="margin-top:auto">[[shopping-basket s]] Hacer un encargo</a>
+        </div>
+        [[NAV-VECINO:hoy]]
+      </div></div>
+      <figcaption><b>05 · Vecino</b><strong>Hoy</strong><span>La pantalla principal. Arriba lo urgente (cambio de consulta), después los servicios del día con su hora estimada y el encargo preparado. Datos de la vista <code>v_servicios_hoy</code>.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="06-vecino-servicio">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Pan</h1><span class="pill camino"><span class="punto"></span>En camino</span></div>
+        <div class="cuerpo" style="gap:12px">
+          <div class="tarjeta" style="gap:4px">
+            <span class="eti">Horno San Jorge llega a la Plaza hacia las</span>
+            <div style="display:flex;align-items:baseline;gap:12px"><b style="font:700 64px/1 var(--f-display)" class="num">10:40</b><span class="texto-t" style="font-size:18px">dentro de 15 min</span></div>
+            <p class="peq texto-t">Estimada según la salida del vendedor.</p>
+          </div>
+          <ol class="tiempo">
+            <li><span class="h">10:01<small>llegó</small></span><span class="eje hecho"><i></i></span><span class="d"><b>Martín del Río</b><span>Plaza Mayor</span></span></li>
+            <li><span class="h" style="color:var(--a-acento)">10:40</span><span class="eje actual"><i></i></span><span class="d"><b>Fuenferrada · tu parada</b><span>Plaza · tienes 1 encargo preparado</span></span></li>
+            <li><span class="h">11:20</span><span class="eje pendiente"><i></i></span><span class="d"><b>Segura de los Baños</b><span>Plaza de la Iglesia</span></span></li>
+            <li><span class="h">12:00</span><span class="eje pendiente"><i></i></span><span class="d"><b>La Hoz de la Vieja</b><span>Plaza</span></span></li>
+          </ol>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila"><span class="circulo gris">[[bell]]</span><div class="flex"><div class="t1">Avisarme antes</div><div class="t2">15 minutos antes de llegar</div></div><span class="interruptor on"></span></div>
+            <div class="fila"><span class="circulo gris">[[calendar]]</span><div class="flex"><div class="t1">Pasa de lunes a sábado</div><div class="t2">Encargos hasta 12 h antes</div></div></div>
+          </div>
+        </div>
+        <div class="pie-acciones" style="grid-template-columns:auto 1fr">
+          <a class="boton sec" style="width:58px;padding:0">[[phone]]</a>
+          <a class="boton">[[shopping-basket s]] Encargar al horno</a>
+        </div>
+      </div></div>
+      <figcaption><b>06 · Vecino</b><strong>Detalle de un servicio</strong><span>Recorrido de hoy con las paradas hechas y las que faltan (<code>paso_parada</code>). Deja claro que es una estimación, no GPS.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="07-vecino-encargo-catalogo">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Encargo al horno</h1></div>
+        <div class="cuerpo" style="gap:12px">
+          <div class="tarjeta crema" style="padding:12px 14px">
+            <div class="fila">[[calendar s]]<p class="peq"><b>Mañana, martes 20</b> · Plaza · hacia las 10:40</p><span class="enlace peq" style="margin-left:auto">Cambiar</span></div>
+          </div>
+          <div class="tarjeta sin-pad">
+            <div class="producto"><div class="flex"><div class="t1">Barra de pan</div><div class="t2 num">1,10 € la unidad</div></div><div class="contador activo"><button>[[minus s]]</button><b>2</b><button>[[plus s]]</button></div></div>
+            <div class="producto"><div class="flex"><div class="t1">Hogaza de 1 kg</div><div class="t2 num">3,20 €</div></div><div class="contador"><button>[[minus s]]</button><b>0</b><button>[[plus s]]</button></div></div>
+            <div class="producto"><div class="flex"><div class="t1">Pan de pueblo redondo</div><div class="t2 num">2,40 €</div></div><div class="contador"><button>[[minus s]]</button><b>0</b><button>[[plus s]]</button></div></div>
+            <div class="producto"><div class="flex"><div class="t1">Magdalenas</div><div class="t2 num">4,50 € la docena</div></div><div class="contador activo"><button>[[minus s]]</button><b>1</b><button>[[plus s]]</button></div></div>
+            <div class="producto"><div class="flex"><div class="t1">Tortas de aceite</div><div class="t2 num">2,80 € el paquete</div></div><div class="contador"><button>[[minus s]]</button><b>0</b><button>[[plus s]]</button></div></div>
+          </div>
+          <div class="campo"><div class="entrada">[[pencil s]]<span class="ph">¿Algo que no está en la lista?</span></div></div>
+        </div>
+        <div class="pie-acciones">
+          <div class="fila" style="justify-content:space-between"><span class="texto-t">3 productos</span><b class="num" style="font-size:20px">6,70 €</b></div>
+          <a class="boton">Revisar encargo [[arrow-right s]]</a>
+        </div>
+      </div></div>
+      <figcaption><b>07 · Vecino</b><strong>Hacer un encargo</strong><span>Catálogo del vendedor con botones − / + grandes. Si el producto no está, se escribe (línea con <code>producto_id</code> vacío). Para mañana: el horno pide 12 h de antelación.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="08-vecino-encargo-revisar">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Revisa tu encargo</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <div class="tarjeta" style="gap:10px">
+            <div class="fila"><span class="circulo">[[croissant]]</span><div class="flex"><div class="t1">Horno San Jorge</div><div class="t2">Mañana, martes 20 · hacia las 10:40</div></div></div>
+            <div class="separa"></div>
+            <div class="fila" style="justify-content:space-between"><span>Barra de pan ×2</span><span class="num">2,20 €</span></div>
+            <div class="fila" style="justify-content:space-between"><span>Magdalenas · 1 docena</span><span class="num">4,50 €</span></div>
+            <div class="separa"></div>
+            <div class="fila" style="justify-content:space-between"><b>Total aproximado</b><b class="num" style="font-size:20px">6,70 €</b></div>
+          </div>
+          <div class="campo"><span class="lbl">¿Dónde lo recoges?</span>
+            <div class="radio on"><i></i><div><b>En la Plaza</b><div class="peq texto-t">Cuando pase el horno</div></div></div>
+            <div class="radio"><i></i><div><b>Que me lo acerquen a casa</b><div class="peq texto-t">C/ Mayor, 12 · si el vendedor puede</div></div></div>
+          </div>
+          <div class="campo"><label>Nota para el horno</label><div class="entrada" style="min-height:64px;align-items:flex-start;padding-top:14px;font-size:16px">La barra poco hecha, por favor.</div></div>
+          <div class="fila texto-t peq" style="align-items:flex-start">[[wallet s]]<span>Pagas en mano al recogerlo. El horno tiene que aceptar el encargo y te avisaremos.</span></div>
+        </div>
+        <div class="pie-acciones"><a class="boton">[[send s]] Enviar encargo</a></div>
+      </div></div>
+      <figcaption><b>08 · Vecino</b><strong>Revisar y enviar</strong><span>Resumen, lugar de recogida (<code>entrega_a_domicilio</code>) y nota. Sin pagos dentro de la app: se paga en mano, como ahora.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="09-vecino-encargo-enviado">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cuerpo centrado" style="gap:22px;padding:20px 28px">
+          <div class="exito">
+            <span class="circulo ok" style="width:96px;height:96px">[[check xl]]</span>
+            <h1 class="titulo-g">Encargo enviado</h1>
+            <p class="texto-t" style="font-size:18px">Horno San Jorge tiene que aceptarlo. Te avisaremos en cuanto lo haga.</p>
+          </div>
+          <div class="tarjeta" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><span class="eti">Mañana · martes 20</span><span class="pill pend">Pendiente</span></div>
+            <p style="font-size:17px"><b>Plaza · hacia las 10:40</b></p>
+            <p class="texto-t peq">Barra de pan ×2 · Magdalenas 1 docena · <span class="num">6,70 €</span></p>
+          </div>
+          <div class="tarjeta crema" style="padding:12px 14px"><div class="fila peq">[[users s]]<span>Laura también verá este encargo y sus avisos.</span></div></div>
+        </div>
+        <div class="pie-acciones" style="border:0">
+          <a class="boton">Ver mis encargos</a>
+          <a class="boton sec">Volver a Hoy</a>
+        </div>
+      </div></div>
+      <figcaption><b>09 · Vecino</b><strong>Encargo enviado</strong><span>Confirmación clara. Recuerda que el familiar vinculado también lo ve (<code>familiar_vecino.recibe_avisos</code>).</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="10-vecino-mis-encargos">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><h1>Mis encargos</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <div class="segmentos"><span class="on">En marcha</span><span>Anteriores</span></div>
+          <span class="eti">Hoy</span>
+          <div class="tarjeta" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><div class="fila">[[croissant s]]<b>Horno San Jorge</b></div><span class="pill ok">[[check xs]] Preparado</span></div>
+            <p class="texto-t peq">Plaza · hacia las 10:40</p>
+            <p style="font-size:16px">Barra de pan ×2 · Tortas de aceite</p>
+            <div class="fila" style="justify-content:space-between"><span class="texto-t peq">Pagas al recoger</span><b class="num">5,00 €</b></div>
+          </div>
+          <div class="tarjeta" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><div class="fila">[[fish s]]<b>Pescados Gil</b></div><span class="pill pend">Sin aceptar</span></div>
+            <p class="texto-t peq">Plaza · hacia las 12:15 · lo pidió Laura</p>
+            <p style="font-size:16px">Merluza 1 kg · Boquerones 0,5 kg</p>
+            <div class="fila" style="justify-content:space-between"><span class="texto-t peq">Precio según peso</span><b class="num">≈ 18,85 €</b></div>
+          </div>
+          <span class="eti">Mañana</span>
+          <div class="tarjeta" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><div class="fila">[[croissant s]]<b>Horno San Jorge</b></div><span class="pill pend">Sin aceptar</span></div>
+            <p style="font-size:16px">Barra de pan ×2 · Magdalenas 1 docena</p>
+          </div>
+        </div>
+        [[NAV-VECINO:encargos]]
+      </div></div>
+      <figcaption><b>10 · Vecino</b><strong>Mis encargos</strong><span>Agrupados por día con su estado en color y texto. Si lo pidió un familiar, se dice (<code>creado_por_usuario_id</code>).</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="11-vecino-encargo-detalle">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Encargo de pan</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <div class="tarjeta suave" style="gap:4px">
+            <span class="eti acento">Hoy · Plaza · hacia las 10:40</span>
+            <b style="font:700 24px/1.2 var(--f-display)">Ya está preparado</b>
+            <p class="peq">Recógelo cuando pase Horno San Jorge.</p>
+          </div>
+          <ol class="tiempo">
+            <li><span class="h">19:12<small>ayer</small></span><span class="eje hecho"><i></i></span><span class="d"><b>Enviado</b><span>Por ti</span></span></li>
+            <li><span class="h">9:05</span><span class="eje hecho"><i></i></span><span class="d"><b>Aceptado</b><span>Horno San Jorge</span></span></li>
+            <li><span class="h">9:20</span><span class="eje actual"><i></i></span><span class="d"><b>Preparado</b><span>Importe final: 5,00 €</span></span></li>
+            <li><span class="h">10:40</span><span class="eje pendiente"><i></i></span><span class="d"><b>Entregado</b><span>Al recogerlo en la Plaza</span></span></li>
+          </ol>
+          <div class="tarjeta" style="gap:8px">
+            <div class="fila" style="justify-content:space-between"><span>Barra de pan ×2</span><span class="num">2,20 €</span></div>
+            <div class="fila" style="justify-content:space-between"><span>Tortas de aceite · 1 paquete</span><span class="num">2,80 €</span></div>
+            <div class="separa"></div>
+            <div class="fila" style="justify-content:space-between"><b>Total</b><b class="num">5,00 €</b></div>
+            <p class="peq texto-t">Nota: «Si puede ser, la barra poco hecha.»</p>
+          </div>
+          <p class="peq texto-t">Ya está preparado y no se puede cancelar desde aquí. Si no puedes ir, llama al horno.</p>
+        </div>
+        <div class="pie-acciones"><a class="boton sec">[[phone s]] Llamar al horno</a></div>
+      </div></div>
+      <figcaption><b>11 · Vecino</b><strong>Detalle del encargo</strong><span>Cada paso sale de <code>historial_encargo</code>, que rellena un trigger. Explica por qué no se puede cancelar en vez de esconder el botón.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="12-vecino-avisos">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><h1>Avisos del pueblo</h1></div>
+        <div class="cuerpo" style="gap:10px">
+          <div class="chips"><span class="chip on">Todos</span><span class="chip">Sanidad</span><span class="chip">Agua y luz</span><span class="chip">Trámites</span></div>
+          <div class="tarjeta oscura" style="gap:6px">
+            <div class="fila" style="justify-content:space-between"><span class="eti" style="color:#C9CDD6">Sanidad · hoy 8:05</span><span class="pill" style="background:#fff;color:var(--a-tinta)">Importante</span></div>
+            <b style="font:700 20px/1.2 var(--f-display)">Hoy no hay consulta en Fuenferrada</b>
+            <p style="color:#D9DCE3;font-size:15px">Se pasa en el Centro de Salud de Utrillas, de 9:30 a 10:30.</p>
+          </div>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila" style="align-items:flex-start"><span class="circulo azul">[[droplets]]</span><div class="flex"><div class="t1">Corte de agua el miércoles</div><div class="t2">De 9:00 a 13:00 · ayer</div></div></div>
+            <div class="fila" style="align-items:flex-start"><span class="circulo gris">[[sofa]]</span><div class="flex"><div class="t1">Recogida de muebles y enseres</div><div class="t2">El jueves, antes de las 8:00 · hace 2 días</div></div></div>
+            <div class="fila" style="align-items:flex-start"><span class="circulo gris">[[bus]]</span><div class="flex"><div class="t1">Nuevo horario del autobús a Teruel</div><div class="t2">Toda la comarca · ayer</div></div></div>
+          </div>
+          <a class="tarjeta crema" style="padding:14px 16px;text-decoration:none;color:inherit"><div class="fila">[[stethoscope]]<div class="flex"><div class="t1" style="font-size:17px">Horario de la consulta médica</div></div>[[chevron-right]]</div></a>
+        </div>
+        [[NAV-VECINO:avisos]]
+      </div></div>
+      <figcaption><b>12 · Vecino</b><strong>Avisos del pueblo</strong><span>Los avisos vigentes del ayuntamiento (vista <code>v_avisos_vigentes</code>). Los importantes, arriba y en oscuro.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="13-vecino-aviso-detalle">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><div style="flex:1"></div><span class="pill cambio">Importante</span></div>
+        <div class="cuerpo" style="gap:16px">
+          <span class="eti acento">Sanidad</span>
+          <h1 class="titulo-g">Hoy no hay consulta en Fuenferrada</h1>
+          <div class="fila texto-t peq">[[landmark s]]<span>Ayuntamiento de Fuenferrada · hoy, 8:05</span></div>
+          <p style="font-size:18px;line-height:1.55">La consulta de medicina de hoy se pasa en el Centro de Salud de Utrillas, en el mismo horario.</p>
+          <div class="tarjeta" style="gap:12px">
+            <div class="fila"><span class="circulo">[[map-pin]]</span><div class="flex"><div class="t1">Centro de Salud de Utrillas</div><div class="t2">En lugar del consultorio del pueblo</div></div></div>
+            <div class="fila"><span class="circulo">[[clock]]</span><div class="flex"><div class="t1 num">9:30 a 10:30</div><div class="t2">Solo hoy, lunes 19</div></div></div>
+          </div>
+          <div class="tarjeta crema" style="padding:12px 14px"><div class="fila peq" style="align-items:flex-start">[[shield-check s]]<span>Claxon solo publica días, horas y lugares de consulta. Nunca datos de salud.</span></div></div>
+        </div>
+        <div class="pie-acciones"><a class="boton sec">Ver el horario de la semana</a></div>
+      </div></div>
+      <figcaption><b>13 · Vecino</b><strong>Detalle de un aviso</strong><span>Lo publica el ayuntamiento al registrar un cambio (<code>incidencia_consulta</code> + <code>aviso</code>). Lo importante en texto grande y en dos datos: dónde y cuándo.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="14-vecino-consultas">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Consulta médica</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <p class="texto-t">Consultorio de Fuenferrada. Centro de salud de referencia: Utrillas.</p>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila" style="align-items:flex-start;background:var(--a-suave)">
+              <div style="width:62px"><b style="font:700 20px/1 var(--f-display)">Lun</b><div class="t2">hoy</div></div>
+              <div class="flex"><div class="t1">Medicina · 9:30 a 10:30</div><div class="t2" style="color:var(--a-acento-osc);font-weight:600">Hoy en el Centro de Salud de Utrillas</div></div>
+              <span class="pill cambio">Cambio</span>
+            </div>
+            <div class="fila" style="align-items:flex-start"><div style="width:62px"><b style="font:700 20px/1 var(--f-display)">Mié</b></div><div class="flex"><div class="t1">Enfermería · 10:00 a 11:00</div><div class="t2">Consultorio local</div></div></div>
+            <div class="fila" style="align-items:flex-start"><div style="width:62px"><b style="font:700 20px/1 var(--f-display)">Jue</b></div><div class="flex"><div class="t1">Medicina · 9:30 a 10:30</div><div class="t2">Consultorio local</div></div></div>
+          </div>
+          <p class="peq texto-t">Martes, viernes y fines de semana no hay consulta en el pueblo.</p>
+          <div class="tarjeta crema" style="padding:14px 16px"><div class="fila">[[bell]]<div class="flex"><div class="t1" style="font-size:17px">Avisarme si hay cambios</div></div><span class="interruptor on"></span></div></div>
+        </div>
+        [[NAV-VECINO:avisos]]
+      </div></div>
+      <figcaption><b>14 · Vecino</b><strong>Horario de consulta</strong><span>Semana tipo (<code>consulta_medica</code>) con el cambio de hoy encima (vista <code>v_consultas_hoy</code>).</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="15-vecino-familia">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><h1>Familia</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <p class="texto-t">Personas que te ayudan desde fuera del pueblo.</p>
+          <div class="tarjeta" style="gap:14px">
+            <div class="fila"><span class="avatar azul g">LP</span><div class="flex"><div class="t1">Laura Pérez</div><div class="t2">Tu hija · desde septiembre</div></div></div>
+            <div class="separa"></div>
+            <div class="fila"><div class="flex"><div style="font-weight:600">Puede hacer encargos por ti</div></div><span class="interruptor on"></span></div>
+            <div class="fila"><div class="flex"><div style="font-weight:600">Recibe tus avisos</div><div class="t2 peq">Llegadas, encargos y cambios de consulta</div></div><span class="interruptor on"></span></div>
+          </div>
+          <span class="eti">Añadir a un familiar</span>
+          <div class="tarjeta suave" style="gap:10px">
+            <p class="peq">Dale este código. Lo escribe en su móvil y queda vinculado.</p>
+            <div class="codigo"><span>8</span><span>F</span><span>3</span><span>K</span><span>2</span><span>P</span></div>
+            <p class="peq texto-t">Caduca en 24 horas.</p>
+          </div>
+        </div>
+        <div class="pie-acciones" style="border:0;padding-bottom:12px"><a class="boton sec">[[share-2 s]] Enviar el código</a></div>
+        [[NAV-VECINO:familia]]
+      </div></div>
+      <figcaption><b>15 · Vecino</b><strong>Familia</strong><span>Quién ayuda a María y qué puede hacer (<code>familiar_vecino</code>). Se vincula con un código de 6 caracteres, sin compartir la contraseña.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="16-vecino-ajustes">
+      <div class="movil"><div class="pantalla-app">
+        [[ESTADO]]
+        <div class="cab"><span class="volver">[[chevron-left]]</span><h1>Ajustes</h1></div>
+        <div class="cuerpo" style="gap:14px">
+          <div class="campo"><span class="lbl">Tamaño de la letra</span>
+            <div class="segmentos"><span style="font-size:14px">Normal</span><span style="font-size:16px">Grande</span><span class="on" style="font-size:18px">Muy grande</span></div>
+          </div>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila"><span class="circulo gris">[[contrast]]</span><div class="flex"><div class="t1">Alto contraste</div></div><span class="interruptor"></span></div>
+            <div class="fila"><span class="circulo gris">[[accessibility]]</span><div class="flex"><div class="t1">Lector de pantalla</div><div class="t2">Funciona con TalkBack</div></div></div>
+          </div>
+          <span class="eti">Avisos</span>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila"><span class="circulo">[[croissant]]</span><div class="flex"><div class="t1">Horno San Jorge</div><div class="t2">15 min antes</div></div>[[chevron-right]]</div>
+            <div class="fila"><span class="circulo azul">[[fish]]</span><div class="flex"><div class="t1">Pescados Gil</div><div class="t2">15 min antes</div></div>[[chevron-right]]</div>
+            <div class="fila"><span class="circulo verde">[[apple]]</span><div class="flex"><div class="t1">Frutas Pilar</div><div class="t2">Sin avisos</div></div>[[chevron-right]]</div>
+          </div>
+          <div class="tarjeta sin-pad lista">
+            <div class="fila"><span class="circulo gris">[[map-pin]]</span><div class="flex"><div class="t1">Mi pueblo</div><div class="t2">Fuenferrada</div></div>[[chevron-right]]</div>
+          </div>
+          <button class="enlace" style="justify-self:start;color:var(--a-error)">Cerrar sesión</button>
+        </div>
+      </div></div>
+      <figcaption><b>16 · Vecino</b><strong>Ajustes y accesibilidad</strong><span>Letra grande por defecto, alto contraste y TalkBack. La preferencia se guarda en el servidor (<code>usuario.tamano_texto</code>), así se mantiene si cambia de móvil.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="17-notificaciones">
+      <div class="movil"><div class="pantalla-app" style="background:linear-gradient(180deg,#2B2F3A 0%,#4A2F27 100%);color:#fff">
+        [[ESTADO]]
+        <div style="text-align:center;padding:26px 0 30px">
+          <div style="font:600 18px/1.2 var(--f-texto);opacity:.85">lunes, 19 de octubre</div>
+          <div style="font:700 92px/1 var(--f-display)" class="num">10:25</div>
+        </div>
+        <div style="display:grid;gap:10px;padding:0 12px">
+          <div class="push"><span class="logo">[[volume-2 s]]</span><div><span class="app">Claxon</span><b>El panadero llega a la plaza en 15 min</b><p>Horno San Jorge · hora estimada 10:40. Tienes 1 encargo preparado.</p></div><time>ahora</time></div>
+          <div class="push"><span class="logo">[[volume-2 s]]</span><div><span class="app">Claxon</span><b>Tu encargo está preparado</b><p>Barra de pan ×2 y tortas de aceite (5,00 €).</p></div><time>9:20</time></div>
+          <div class="push"><span class="logo">[[volume-2 s]]</span><div><span class="app">Claxon</span><b>Hoy no hay consulta en Fuenferrada</b><p>Se pasa en el Centro de Salud de Utrillas, de 9:30 a 10:30.</p></div><time>8:05</time></div>
+        </div>
+        <div style="margin-top:auto;display:flex;justify-content:space-between;padding:0 46px 40px">
+          <span class="circulo" style="background:rgba(255,255,255,.15);color:#fff">[[flashlight s]]</span>
+          <span class="circulo" style="background:rgba(255,255,255,.15);color:#fff">[[camera s]]</span>
+        </div>
+      </div></div>
+      <figcaption><b>17 · Vecino y familiar</b><strong>Notificaciones push</strong><span>Lo que llega por Firebase Cloud Messaging. Un aviso por evento: la <code>clave_deduplicacion</code> evita repetidos.</span></figcaption>
+    </figure>
+  </div>
+</section>

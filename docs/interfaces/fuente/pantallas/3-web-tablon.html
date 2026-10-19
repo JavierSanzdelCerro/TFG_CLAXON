@@ -1,0 +1,271 @@
+<section class="grupo" id="ayuntamiento">
+  <header>
+    <div class="ceja">Panel web · Flutter Web</div>
+    <h2>Ana, secretaria de tres ayuntamientos</h2>
+    <p>En los pueblos pequeños, una misma secretaria lleva varios ayuntamientos. Desde el ordenador publica avisos, registra cambios de la consulta y vigila que los tablones funcionan.</p>
+  </header>
+  <div class="pantallas anchas">
+
+    <figure class="pantalla" data-png="29-ayuntamiento-inicio">
+      <div class="desplazable"><div class="navegador">
+        [[WEB:ayuntamiento|inicio|panel.claxon.app/ayuntamiento]]
+          <header class="cab-web">
+            <h1>Buenos días, Ana</h1>
+            <span class="selector">[[map-pin s]] Fuenferrada [[chevron-down s]]</span>
+            <a class="boton">[[plus s]] Nuevo aviso</a>
+          </header>
+          <div class="contenido-web">
+            <div class="kpis">
+              <div class="kpi"><span class="eti">Vecinos en Claxon</span><b>2</b><span>y 1 familiar que les ayuda</span></div>
+              <div class="kpi"><span class="eti">Servicios hoy</span><b>2</b><span>Pan 10:40 · Pescado 12:15</span></div>
+              <div class="kpi"><span class="eti">Avisos en vigor</span><b>4</b><span>1 importante</span></div>
+              <div class="kpi"><span class="eti">Tablón del bar</span><b style="color:var(--a-ok)">En línea</b><span>Conectado hace 1 min</span></div>
+            </div>
+            <div class="columnas-web">
+              <div class="tarjeta" style="padding:20px;gap:14px">
+                <h2 class="titulo-m">Hoy pasan por Fuenferrada</h2>
+                <table class="tabla">
+                  <thead><tr><th>Servicio</th><th>Quién</th><th class="num">Hora</th><th>Estado</th></tr></thead>
+                  <tbody>
+                    <tr><td><div class="fila">[[croissant s]]<b>Pan</b></div></td><td>Horno San Jorge<span class="t2">Plaza</span></td><td class="num"><b>10:40</b></td><td><span class="pill camino"><span class="punto"></span>En camino</span></td></tr>
+                    <tr><td><div class="fila">[[fish s]]<b>Pescado</b></div></td><td>Pescados Gil<span class="t2">Plaza</span></td><td class="num"><b>12:15</b></td><td><span class="pill">Previsto</span></td></tr>
+                    <tr><td><div class="fila">[[stethoscope s]]<b>Consulta</b></div></td><td>Centro de Salud de Utrillas<span class="t2">En lugar del consultorio</span></td><td class="num"><b>9:30</b></td><td><span class="pill cambio">Cambio de lugar</span></td></tr>
+                  </tbody>
+                </table>
+                <h2 class="titulo-m" style="margin-top:6px">Avisos publicados</h2>
+                <table class="tabla">
+                  <thead><tr><th>Aviso</th><th>Para</th><th>Publicado</th></tr></thead>
+                  <tbody>
+                    <tr><td><b>Hoy no hay consulta en Fuenferrada</b><span class="t2">Sanidad · importante · con notificación</span></td><td>Fuenferrada</td><td>Hoy, 8:05</td></tr>
+                    <tr><td><b>Corte de agua el miércoles</b><span class="t2">Agua y luz · con notificación</span></td><td>Fuenferrada</td><td>Ayer</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:grid;gap:20px">
+                <div class="tarjeta" style="padding:20px;gap:12px">
+                  <div class="fila" style="justify-content:space-between"><h2 class="titulo-m">Consulta esta semana</h2><span class="enlace" style="font-size:14px">Ver horario</span></div>
+                  <div class="fila" style="background:var(--a-suave);border-radius:12px;padding:10px 12px"><b style="width:44px">Lun</b><div class="flex"><b>Medicina · 9:30</b><div class="t2 peq" style="color:var(--a-acento-osc)">Hoy en Utrillas</div></div><span class="pill cambio">Cambio</span></div>
+                  <div class="fila" style="padding:4px 12px"><b style="width:44px">Mié</b><div class="flex">Enfermería · 10:00</div></div>
+                  <div class="fila" style="padding:4px 12px"><b style="width:44px">Jue</b><div class="flex">Medicina · 9:30</div></div>
+                  <a class="boton sec mini" style="justify-self:start">[[calendar s]] Registrar un cambio</a>
+                </div>
+                <div class="tarjeta crema" style="padding:20px;gap:10px">
+                  <span class="eti">Borrador</span>
+                  <b style="font-size:17px">Campaña de vacunación de la gripe</b>
+                  <p class="peq texto-t">Falta confirmar con el centro de salud los días de cada pueblo.</p>
+                  <a class="boton mini" style="justify-self:start">Seguir editando</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div></div>
+      <figcaption><b>29 · Ayuntamiento</b><strong>Inicio del panel</strong><span>Resumen del pueblo elegido (Ana gestiona tres: <code>gestor_municipal</code> es N:M). Lo de hoy, los avisos publicados y la consulta de la semana.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="30-ayuntamiento-nuevo-aviso">
+      <div class="desplazable"><div class="navegador">
+        [[WEB:ayuntamiento|avisos|panel.claxon.app/ayuntamiento/avisos/nuevo]]
+          <header class="cab-web">
+            <h1>Editar aviso</h1>
+            <span class="pill">Borrador</span>
+          </header>
+          <div class="contenido-web" style="grid-template-columns:1.25fr 1fr;gap:28px">
+            <div class="form-web">
+              <div class="campo"><label>Título</label><div class="entrada">Campaña de vacunación de la gripe</div></div>
+              <div class="dos">
+                <div class="campo"><label>Tipo de aviso</label><div class="entrada"><span style="flex:1">Sanidad</span>[[chevron-down s]]</div></div>
+                <div class="campo"><span class="lbl">Importancia</span><div class="segmentos"><span>Normal</span><span class="on">Importante</span><span>Urgente</span></div></div>
+              </div>
+              <div class="campo"><label>Texto</label><div class="entrada" style="min-height:110px;align-items:flex-start;padding-top:12px;line-height:1.5">Este otoño se vacuna de la gripe en el consultorio de cada pueblo. Los días y horas se confirmarán con el Centro de Salud de Utrillas. Pide cita llamando al centro de salud.</div><span class="ayuda">Escribe frases cortas. Sin datos de salud de nadie.</span></div>
+              <div class="campo"><span class="lbl">Pueblos</span>
+                <div style="display:flex;gap:22px"><span class="casilla"><i class="on">[[check]]</i>Fuenferrada</span><span class="casilla"><i class="on">[[check]]</i>Segura de los Baños</span><span class="casilla"><i></i>La Hoz de la Vieja</span></div>
+              </div>
+              <div class="dos">
+                <div class="campo"><label>Mostrar desde</label><div class="entrada num">[[calendar s]] Miércoles 21 oct · 9:00</div></div>
+                <div class="campo"><label>Hasta</label><div class="entrada"><span class="ph">Sin fecha de fin</span></div></div>
+              </div>
+              <div class="fila" style="justify-content:space-between;background:var(--a-tarjeta);border:1px solid var(--a-linea);border-radius:12px;padding:12px 14px"><div><b>Enviar notificación al móvil</b><div class="t2 peq">A 2 vecinos y 1 familiar, al publicarse</div></div><span class="interruptor on"></span></div>
+              <div class="fila" style="gap:12px"><a class="boton sec mini">Guardar borrador</a><a class="boton mini">[[send s]] Publicar aviso</a></div>
+            </div>
+            <div style="display:grid;gap:16px;align-content:start">
+              <span class="eti">Así lo verán</span>
+              <div class="tarjeta crema" style="padding:18px;gap:10px">
+                <span class="eti">En el móvil</span>
+                <div class="push" style="box-shadow:none;border:1px solid var(--a-linea)"><span class="logo">[[volume-2 s]]</span><div><span class="app">Claxon</span><b>Campaña de vacunación de la gripe</b><p>Este otoño se vacuna de la gripe en el consultorio de cada pueblo…</p></div><time>9:00</time></div>
+              </div>
+              <div class="tarjeta crema" style="padding:18px;gap:10px">
+                <span class="eti">En el tablón del bar</span>
+                <div style="background:var(--a-tinta);color:#fff;border-radius:14px;padding:16px 18px;display:grid;gap:6px">
+                  <span class="eti" style="color:#C9CDD6">Sanidad · importante</span>
+                  <b style="font:700 22px/1.2 var(--f-display)">Campaña de vacunación de la gripe</b>
+                  <p style="font-size:14.5px;color:#D9DCE3">Este otoño se vacuna de la gripe en el consultorio de cada pueblo.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div></div>
+      <figcaption><b>30 · Ayuntamiento</b><strong>Escribir un aviso</strong><span>Formulario con vista previa de cómo llegará al móvil y al tablón. Puede ir a varios pueblos a la vez (<code>aviso_municipio</code>) y guardarse como borrador.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="31-ayuntamiento-consulta">
+      <div class="desplazable"><div class="navegador">
+        [[WEB:ayuntamiento|consultas|panel.claxon.app/ayuntamiento/consulta]]
+          <header class="cab-web">
+            <h1>Consulta médica · Fuenferrada</h1>
+            <span class="selector">Semana del 19 al 25 de octubre [[chevron-down s]]</span>
+          </header>
+          <div class="contenido-web" style="grid-template-columns:1.45fr 1fr;gap:24px">
+            <div style="display:grid;gap:12px;align-content:start">
+              <div class="semana">
+                <div class="cabd"></div><div class="cabd hoy">Lun 19</div><div class="cabd">Mar 20</div><div class="cabd">Mié 21</div><div class="cabd">Jue 22</div><div class="cabd">Vie 23</div><div class="cabd">Sáb 24</div><div class="cabd">Dom 25</div>
+                <div>9:00</div><div><span class="bloque-c cambio" style="top:50%;height:58px"><b>Medicina</b>Utrillas</span></div><div></div><div></div><div><span class="bloque-c" style="top:50%;height:58px"><b>Medicina</b>Local</span></div><div></div><div></div><div></div>
+                <div>10:00</div><div></div><div></div><div><span class="bloque-c enf" style="top:4px;height:52px"><b>Enferm.</b>Local</span></div><div></div><div></div><div></div><div></div>
+                <div>11:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                <div>12:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+              </div>
+              <p class="peq texto-t">Centro de salud de referencia: Utrillas. El horario habitual sale de <code>consulta_medica</code>; los cambios puntuales, de <code>incidencia_consulta</code>.</p>
+            </div>
+            <div class="tarjeta" style="padding:20px;gap:14px;align-content:start">
+              <div><span class="eti acento">Registrar un cambio</span><h2 class="titulo-m" style="margin-top:4px">Medicina · lunes 19, 9:30 a 10:30</h2></div>
+              <div class="form-web" style="gap:12px">
+                <div class="campo"><span class="lbl">¿Qué cambia?</span>
+                  <div class="radio"><i></i>No hay consulta</div>
+                  <div class="radio"><i></i>Cambia la hora</div>
+                  <div class="radio on"><i></i>Se pasa en otro sitio</div>
+                </div>
+                <div class="campo"><label>¿Dónde?</label><div class="entrada"><span style="flex:1">Centro de Salud de Utrillas</span>[[chevron-down s]]</div></div>
+                <div class="campo"><label>Motivo (sin datos de salud)</label><div class="entrada">Reorganización del personal sanitario</div></div>
+                <span class="casilla"><i class="on">[[check]]</i>Publicar aviso y avisar a los vecinos</span>
+              </div>
+              <div class="fila" style="background:var(--a-ok-suave);color:var(--a-ok);border-radius:12px;padding:10px 12px">[[circle-check s]]<span class="peq" style="font-weight:600">Publicado hoy a las 8:05 · 2 vecinos y 1 familiar avisados</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div></div>
+      <figcaption><b>31 · Ayuntamiento</b><strong>Consulta médica</strong><span>Horario semanal y formulario para un cambio puntual. Al guardarlo se crea el aviso y la notificación automáticamente; así no se le olvida a nadie avisar.</span></figcaption>
+    </figure>
+
+    <figure class="pantalla" data-png="32-ayuntamiento-avisos">
+      <div class="desplazable"><div class="navegador">
+        [[WEB:ayuntamiento|avisos|panel.claxon.app/ayuntamiento/avisos]]
+          <header class="cab-web">
+            <h1>Avisos</h1>
+            <span class="selector">[[search s]] <span class="texto-t" style="font-weight:500">Buscar aviso</span></span>
+            <a class="boton">[[plus s]] Nuevo aviso</a>
+          </header>
+          <div class="contenido-web">
+            <div class="chips"><span class="chip on">Todos · 6</span><span class="chip">Publicados · 5</span><span class="chip">Borradores · 1</span><span class="chip">Archivados · 0</span></div>
+            <div class="tarjeta" style="padding:8px 20px">
+              <table class="tabla">
+                <thead><tr><th style="padding-top:12px">Aviso</th><th style="padding-top:12px">Pueblos</th><th style="padding-top:12px">Estado</th><th style="padding-top:12px">Se ve hasta</th><th style="padding-top:12px">Móvil</th></tr></thead>
+                <tbody>
+                  <tr><td><b>Hoy no hay consulta en Fuenferrada</b><span class="t2">Sanidad · importante</span></td><td>Fuenferrada</td><td><span class="pill ok">Publicado</span></td><td>Hoy, 23:59</td><td>[[bell s]]</td></tr>
+                  <tr><td><b>Corte de agua el miércoles</b><span class="t2">Agua y luz</span></td><td>Fuenferrada</td><td><span class="pill ok">Publicado</span></td><td>Jueves 22</td><td>[[bell s]]</td></tr>
+                  <tr><td><b>Recogida de muebles y enseres</b><span class="t2">Trámites</span></td><td>Fuenferrada, Segura</td><td><span class="pill ok">Publicado</span></td><td>Viernes 23</td><td class="texto-t">—</td></tr>
+                  <tr><td><b>Nuevo horario del autobús a Teruel</b><span class="t2">Transporte</span></td><td>Toda la comarca (4)</td><td><span class="pill ok">Publicado</span></td><td>Jueves 29</td><td class="texto-t">—</td></tr>
+                  <tr><td><b>Castañada popular el sábado</b><span class="t2">Fiestas · publicado por Luis Navarro</span></td><td>Martín del Río</td><td><span class="pill ok">Publicado</span></td><td>Domingo 25</td><td>[[bell s]]</td></tr>
+                  <tr><td><b>Campaña de vacunación de la gripe</b><span class="t2">Sanidad · importante</span></td><td>Fuenferrada, Segura</td><td><span class="pill">Borrador</span></td><td class="texto-t">—</td><td>[[bell s]]</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div></div>
+      </div></div>
+      <figcaption><b>32 · Ayuntamiento</b><strong>Lista de avisos</strong><span>Todos los avisos de sus pueblos con su estado (<code>BORRADOR</code>, <code>PUBLICADO</code>, <code>ARCHIVADO</code>), alcance y si se mandó notificación.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="grupo" id="admin">
+  <header>
+    <div class="ceja">Panel web · Administración</div>
+    <h2>El equipo de Claxon</h2>
+    <p>Para el piloto: dar de alta pueblos, vendedores y tablones, y comprobar que los avisos salen bien.</p>
+  </header>
+  <div class="pantallas anchas">
+    <figure class="pantalla" data-png="33-admin-resumen">
+      <div class="desplazable"><div class="navegador">
+        [[WEB:admin|inicio|panel.claxon.app/admin]]
+          <header class="cab-web">
+            <h1>Piloto · Cuencas Mineras</h1>
+            <span class="selector">Hoy, lunes 19 [[chevron-down s]]</span>
+          </header>
+          <div class="contenido-web">
+            <div class="kpis">
+              <div class="kpi"><span class="eti">Pueblos</span><b>5</b><span>4 con servicios esta semana</span></div>
+              <div class="kpi"><span class="eti">Usuarios</span><b>11</b><span>6 vecinos · 1 familiar · 3 vendedores</span></div>
+              <div class="kpi"><span class="eti">Encargos hoy</span><b>5</b><span>2 sin aceptar</span></div>
+              <div class="kpi"><span class="eti">Notificaciones hoy</span><b>6</b><span>1 pendiente · 0 fallidas</span></div>
+            </div>
+            <div class="columnas-web" style="grid-template-columns:1.5fr 1fr">
+              <div class="tarjeta" style="padding:20px;gap:14px">
+                <h2 class="titulo-m">Pueblos</h2>
+                <table class="tabla">
+                  <thead><tr><th>Pueblo</th><th class="num">Vecinos</th><th>Servicios</th><th>Tablón</th><th>Gestiona</th></tr></thead>
+                  <tbody>
+                    <tr><td><b>Fuenferrada</b></td><td class="num">2</td><td>Pan · Pescado · Fruta</td><td><span class="pill ok">En línea</span></td><td>Ana Martín</td></tr>
+                    <tr><td><b>Martín del Río</b></td><td class="num">2</td><td>Pan · Pescado · Fruta</td><td><span class="pill pend">Hace 2 días</span></td><td>Luis Navarro</td></tr>
+                    <tr><td><b>Segura de los Baños</b></td><td class="num">1</td><td>Pan · Pescado · Fruta</td><td><span class="pill ok">En línea</span></td><td>Ana Martín</td></tr>
+                    <tr><td><b>La Hoz de la Vieja</b></td><td class="num">1</td><td>Pan · Fruta</td><td class="texto-t">Sin tablón</td><td>Ana Martín</td></tr>
+                    <tr><td><b>Utrillas</b></td><td class="num">0</td><td class="texto-t">Salen de aquí</td><td class="texto-t">Sin tablón</td><td class="texto-t">—</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:grid;gap:20px">
+                <div class="tarjeta" style="padding:20px;gap:12px">
+                  <h2 class="titulo-m">Vendedores</h2>
+                  <div class="fila"><span class="circulo">[[croissant s]]</span><div class="flex"><b>Horno San Jorge</b><div class="t2 peq">Ruta en curso · 4 paradas</div></div><span class="pill camino">En ruta</span></div>
+                  <div class="fila"><span class="circulo azul">[[fish s]]</span><div class="flex"><b>Pescados Gil</b><div class="t2 peq">Sale a las 11:30</div></div><span class="pill">Hoy</span></div>
+                  <div class="fila"><span class="circulo verde">[[apple s]]</span><div class="flex"><b>Frutas y Verduras Pilar</b><div class="t2 peq">Martes y jueves</div></div><span class="pill">Mañana</span></div>
+                </div>
+                <div class="tarjeta" style="padding:20px;gap:10px">
+                  <h2 class="titulo-m">Avisos al móvil hoy</h2>
+                  <div class="fila" style="justify-content:space-between"><span>Enviados</span><b class="num">5</b></div>
+                  <div class="fila" style="justify-content:space-between"><span>Pendientes (Manuel, 10:30)</span><b class="num">1</b></div>
+                  <div class="fila" style="justify-content:space-between"><span>Fallidos</span><b class="num">0</b></div>
+                  <p class="peq texto-t">Duplicados evitados por la clave única: 0</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div></div>
+      <figcaption><b>33 · Administración</b><strong>Resumen del piloto</strong><span>Estado de los 5 pueblos, los vendedores y el envío de notificaciones (tabla <code>notificacion</code>: enviadas, pendientes y fallidas).</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="grupo" id="tablon">
+  <header>
+    <div class="ceja">Tablón web · Pantalla del bar</div>
+    <h2>El tablón del Bar La Plaza</h2>
+    <p>Para quien no usa el móvil. Una tele en el bar o el local social abre un enlace secreto y se actualiza sola. Letra enorme, se lee desde la barra.</p>
+  </header>
+  <div class="pantallas anchas">
+    <figure class="pantalla" data-png="34-tablon-bar">
+      <div class="desplazable"><div class="tele"><div class="panel-tv"><div class="tablon">
+        <div class="cabt">
+          <div><div class="sub">Tablón del Bar La Plaza</div><h1>Fuenferrada</h1></div>
+          <div class="reloj"><b>10:25</b><span>Lunes 19 de octubre</span></div>
+        </div>
+        <div class="cuerpot">
+          <div style="display:grid;align-content:start">
+            <span class="eti" style="font-size:16px">Hoy pasan por la plaza</span>
+            <div class="servicio-tv"><span class="circulo">[[croissant]]</span><div><b>Pan</b><span>Horno San Jorge</span></div><div class="hora">10:40<small>En camino</small></div></div>
+            <div class="servicio-tv"><span class="circulo azul">[[fish]]</span><div><b>Pescado</b><span>Pescados Gil</span></div><div class="hora">12:15<small style="color:var(--a-tenue)">Previsto</small></div></div>
+            <div class="servicio-tv" style="border-bottom:0"><span class="circulo verde">[[apple]]</span><div><b>Fruta</b><span>Mañana, martes</span></div><div class="hora" style="font-size:40px;color:var(--a-tenue)">9:30</div></div>
+          </div>
+          <div style="display:grid;gap:16px;align-content:start">
+            <div class="aviso-tv" style="background:var(--a-tinta);color:#fff"><span class="eti" style="color:#C9CDD6">Consulta médica</span><b>Hoy no hay consulta</b><p style="color:#D9DCE3">Se pasa en el Centro de Salud de Utrillas, de 9:30 a 10:30.</p></div>
+            <div class="aviso-tv" style="background:var(--a-crema)"><span class="eti">Ayuntamiento</span><b>Corte de agua el miércoles</b><p>De 9:00 a 13:00 por una reparación.</p></div>
+            <div class="aviso-tv" style="background:var(--a-crema)"><span class="eti">Ayuntamiento</span><b>Recogida de enseres el jueves</b><p>Dejadlos junto a los contenedores antes de las 8:00.</p></div>
+          </div>
+        </div>
+        <div class="pie-t"><span>Se actualiza solo · Claxon</span><span>¿Quieres los avisos en el móvil? Pregunta en el ayuntamiento</span></div>
+      </div></div><div class="pie-tv"></div></div></div>
+      <figcaption><b>34 · Tablón</b><strong>Pantalla del bar</strong><span>Sin usuario ni contraseña: entra con un enlace secreto (<code>pantalla_tablon.token_hash</code>). Junta las vistas <code>v_servicios_hoy</code>, <code>v_consultas_hoy</code> y <code>v_avisos_vigentes</code>.</span></figcaption>
+    </figure>
+  </div>
+</section>
