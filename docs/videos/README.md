@@ -9,6 +9,9 @@ Un vídeo de unos 30 segundos por cada perfil de la app, en estilo anuncio: 1920
 | Vendedor | [claxon-vendedor.mp4](claxon-vendedor.mp4) | «Iniciar ruta», avisos automáticos a los clientes, retrasos con un toque y los encargos de cada parada. |
 | Ayuntamiento | [claxon-ayuntamiento.mp4](claxon-ayuntamiento.mp4) | Panel web, avisos al móvil y al bar, cambios de consulta y el tablón del bar. |
 
+<img src="poster-vecino.jpg" width="49%" alt="Anuncio del vecino"> <img src="poster-familiar.jpg" width="49%" alt="Anuncio del familiar">
+<img src="poster-vendedor.jpg" width="49%" alt="Anuncio del vendedor"> <img src="poster-ayuntamiento.jpg" width="49%" alt="Anuncio del ayuntamiento">
+
 Todos siguen la misma estructura: **gancho** (el problema en una frase, con el sonido del claxon) → **dato** de la presentación (vecino y ayuntamiento) → **4 o 5 escenas** con las pantallas reales de la app → **cierre** con el logo.
 
 ## Cómo se hacen
