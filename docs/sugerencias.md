@@ -4,9 +4,9 @@ Ideas que han surgido al diseñar la base de datos y las pantallas. Ninguna es o
 
 ## 1. Organización
 
-- **Un solo repositorio.** Existen `JavierSanzdelCerro/TFG_CLAXON` y `estheeraznnar/PROYECTO_TFG_CLAXON`, los dos vacíos. Usad este, añadid a la otra persona como colaboradora (*Settings → Collaborators*) y archivad el otro.
+- **Un solo repositorio.** Existen `JavierSanzdelCerro/TFG_CLAXON` y `estheeraznnar/PROYECTO_TFG_CLAXON`, los dos vacíos. Usad este, dad acceso de escritura a la otra persona del equipo (*Settings → Collaborators*) y archivad el otro.
 - **Ramas y pull requests.** Nada directo a `main`: cada tarea en su rama y un PR que revisa la otra persona. En la defensa queda muy bien enseñar el historial.
-- **Flyway desde el primer día.** Mover `database/01_esquema.sql` a `backend/src/main/resources/db/migration/V1__esquema_inicial.sql`. Cada cambio posterior va en un archivo nuevo (`V2__...`), y así las bases de datos de las dos estaréis siempre iguales.
+- **Flyway desde el primer día.** Mover `database/01_esquema.sql` a `backend/src/main/resources/db/migration/V1__esquema_inicial.sql`. Cada cambio posterior va en un archivo nuevo (`V2__...`), y así vuestras bases de datos estarán siempre iguales.
 
 ## 2. Alcance: qué construir primero
 
