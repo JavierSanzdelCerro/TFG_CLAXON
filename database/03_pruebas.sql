@@ -33,21 +33,37 @@ END $$;
 
 -- Usuarios
 SELECT pg_temp.debe_fallar('Usuario con contraseña pero sin email ni teléfono',
-    $q$INSERT INTO usuario (rol, nombre, password_hash, municipio_id) VALUES ('VECINO', 'X', 'hash', 2)$q$, '23514');
+    $q$INSERT INTO usuario (roles, nombre, password_hash, municipio_id) VALUES ('{VECINO}', 'X', 'hash', 2)$q$, '23514');
 SELECT pg_temp.debe_fallar('Solo un vecino puede no tener contraseña',
-    $q$INSERT INTO usuario (rol, nombre, telefono) VALUES ('FAMILIAR', 'X', '699000000')$q$, '23514');
+    $q$INSERT INTO usuario (roles, nombre, telefono) VALUES ('{FAMILIAR}', 'X', '699000000')$q$, '23514');
 SELECT pg_temp.debe_fallar('Vecino sin pueblo',
-    $q$INSERT INTO usuario (rol, nombre) VALUES ('VECINO', 'X')$q$, '23514');
+    $q$INSERT INTO usuario (roles, nombre) VALUES ('{VECINO}', 'X')$q$, '23514');
 SELECT pg_temp.debe_fallar('Vendedor sin días ni hora de salida',
-    $q$INSERT INTO usuario (rol, nombre, email, password_hash, nombre_comercial, categoria) VALUES ('VENDEDOR', 'X', 'x@x.es', 'h', 'X', 'PAN')$q$, '23514');
+    $q$INSERT INTO usuario (roles, nombre, email, password_hash, nombre_comercial, categoria) VALUES ('{VENDEDOR}', 'X', 'x@x.es', 'h', 'X', 'PAN')$q$, '23514');
+SELECT pg_temp.debe_fallar('Vecino y vendedor a la vez sin datos de vendedor',
+    $q$UPDATE usuario SET roles = '{VECINO,VENDEDOR}' WHERE id = 2$q$, '23514');
+SELECT pg_temp.debe_fallar('Usuario sin ningún rol',
+    $q$UPDATE usuario SET roles = '{}' WHERE id = 2$q$, '23514');
+SELECT pg_temp.debe_fallar('Rol repetido',
+    $q$UPDATE usuario SET roles = '{VECINO,VECINO}' WHERE id = 2$q$, '23514');
+SELECT pg_temp.debe_fallar('Sin contraseña pero con otro rol además de vecino',
+    $q$UPDATE usuario SET roles = '{VECINO,FAMILIAR}' WHERE id = 12$q$, '23514');
+SELECT pg_temp.debe_fallar('Dado de baja pero activo',
+    $q$UPDATE usuario SET fecha_baja = now() WHERE id = 4$q$, '23514');
+SELECT pg_temp.debe_fallar('Email verificado sin email',
+    $q$UPDATE usuario SET email_verificado = TRUE WHERE id = 2$q$, '23514');
+SELECT pg_temp.debe_fallar('Idioma mal escrito',
+    $q$UPDATE usuario SET idioma = 'ES' WHERE id = 2$q$, '23514');
 SELECT pg_temp.debe_fallar('Días de reparto mal escritos',
     $q$UPDATE usuario SET dias_reparto = 'LUNES' WHERE id = 6$q$, '23514');
 SELECT pg_temp.debe_fallar('Email repetido',
-    $q$INSERT INTO usuario (rol, nombre, email, password_hash) VALUES ('ADMIN', 'X', 'admin@claxon.app', 'h')$q$, '23505');
+    $q$INSERT INTO usuario (roles, nombre, email, password_hash) VALUES ('{ADMIN}', 'X', 'admin@claxon.app', 'h')$q$, '23505');
 SELECT pg_temp.debe_fallar('Email con mayúsculas (se guarda en minúsculas)',
-    $q$INSERT INTO usuario (rol, nombre, email, password_hash) VALUES ('ADMIN', 'X', 'Otro@Claxon.app', 'h')$q$, '23514');
+    $q$INSERT INTO usuario (roles, nombre, email, password_hash) VALUES ('{ADMIN}', 'X', 'Otro@Claxon.app', 'h')$q$, '23514');
 SELECT pg_temp.debe_fallar('Rol inventado',
-    $q$UPDATE usuario SET rol = 'JEFE' WHERE id = 1$q$, '23514');
+    $q$UPDATE usuario SET roles = '{ADMIN,JEFE}' WHERE id = 1$q$, '23514');
+SELECT pg_temp.debe_fallar('Mismo teléfono en dos cuentas (para dos roles se usa una sola cuenta)',
+    $q$INSERT INTO usuario (roles, nombre, telefono, password_hash) VALUES ('{FAMILIAR}', 'Manuel', '600333444', 'h')$q$, '23505');
 
 -- Familias
 SELECT pg_temp.debe_fallar('Familiar de sí mismo',
@@ -94,6 +110,14 @@ SELECT pg_temp.debe_fallar('Tablón sin enlace secreto',
     $q$UPDATE municipio SET tablon_ubicacion = 'Bar' WHERE id = 4$q$, '23514');
 
 -- Lo correcto SÍ funciona ------------------------------------------------------
+
+-- Una misma persona (mismo teléfono) con varios roles
+INSERT INTO resultado SELECT 'Manuel es vecino y familiar con el mismo teléfono', roles = '{VECINO,FAMILIAR}' FROM usuario WHERE telefono = '600333444';
+INSERT INTO resultado SELECT 'Buscar a todos los vecinos aunque tengan más roles', count(*) = 7 FROM usuario WHERE roles @> '{VECINO}';
+UPDATE usuario SET roles = '{VECINO,FAMILIAR}' WHERE id = 4;
+INSERT INTO resultado VALUES ('Añadir un rol a una cuenta existente', TRUE);
+UPDATE usuario SET activo = FALSE, fecha_baja = now() WHERE id = 11;
+INSERT INTO resultado VALUES ('Dar de baja una cuenta (se desactiva, no se borra)', TRUE);
 
 -- Reordenar paradas dentro de una transacción (gracias a DEFERRABLE)
 SET CONSTRAINTS uq_parada_orden DEFERRED;

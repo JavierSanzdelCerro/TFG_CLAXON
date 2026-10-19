@@ -228,6 +228,8 @@ def a_dbml(modelo: dict) -> str:
                 ajustes.append(f"note: '{escapar(c['comentario'])}'")
             extra = f" [{', '.join(ajustes)}]" if ajustes else ""
             tipo = c["tipo"].replace(" ", "_") if " " in c["tipo"] and "(" not in c["tipo"] else c["tipo_corto"]
+            if "[" in tipo:  # listas (p. ej. roles varchar(15)[]): DBML las acepta entre comillas
+                tipo = f'"{tipo}"'
             lineas.append(f"  {c['nombre']} {tipo}{extra}")
         pks = [c["nombre"] for c in t["columnas"] if c["pk"]]
         if len(pks) > 1:

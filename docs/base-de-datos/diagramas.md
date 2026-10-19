@@ -3,7 +3,7 @@
 > Generado automáticamente con `database/herramientas/exportar_modelo.py` a partir de la base de datos real.
 > No lo edites a mano: cambia el SQL y vuelve a ejecutar el script.
 
-**10 tablas · 104 columnas · 17 relaciones · 5 vistas · 1 triggers · 37 reglas CHECK · 26 índices**
+**10 tablas · 107 columnas · 17 relaciones · 5 vistas · 1 triggers · 40 reglas CHECK · 27 índices**
 
 Cómo leer las relaciones: `||` exactamente uno · `|o` / `o|` cero o uno · `o{` cero o muchos.
 
@@ -52,7 +52,7 @@ erDiagram
     }
     usuario {
         bigint id PK
-        varchar rol
+        varchar roles
         varchar nombre
         varchar apellidos
         varchar email UK
@@ -63,6 +63,7 @@ erDiagram
         bool necesita_ayuda_entrega
         varchar notas_entrega
         char codigo_familia UK
+        varchar idioma
         varchar tamano_texto
         bool alto_contraste
         varchar token_push
@@ -72,9 +73,11 @@ erDiagram
         time hora_salida
         bool acepta_encargos
         smallint horas_antelacion_encargo
+        bool email_verificado
         bool activo
         timestamptz fecha_alta
         timestamptz ultimo_acceso
+        timestamptz fecha_baja
     }
     familiar {
         bigint familiar_id PK,FK

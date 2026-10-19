@@ -132,16 +132,16 @@
      "tipo_corto": "bigint"
     },
     {
-     "nombre": "rol",
-     "tipo": "character varying(15)",
+     "nombre": "roles",
+     "tipo": "character varying(15)[]",
      "no_nulo": true,
      "identidad": false,
-     "por_defecto": null,
-     "comentario": null,
+     "por_defecto": "ARRAY['VECINO'::character varying(15)]",
+     "comentario": "Uno o varios roles de la misma persona: VECINO, FAMILIAR, VENDEDOR, AYUNTAMIENTO, ADMIN.",
      "pk": false,
      "unico": false,
      "fk": null,
-     "tipo_corto": "varchar(15)"
+     "tipo_corto": "varchar(15)[]"
     },
     {
      "nombre": "nombre",
@@ -268,6 +268,18 @@
      "tipo_corto": "char(6)"
     },
     {
+     "nombre": "idioma",
+     "tipo": "character varying(5)",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "'es'::character varying",
+     "comentario": "Idioma de la app (código ISO: es, ca, en...).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "varchar(5)"
+    },
+    {
      "nombre": "tamano_texto",
      "tipo": "character varying(12)",
      "no_nulo": true,
@@ -376,6 +388,18 @@
      "tipo_corto": "smallint"
     },
     {
+     "nombre": "email_verificado",
+     "tipo": "boolean",
+     "no_nulo": true,
+     "identidad": false,
+     "por_defecto": "false",
+     "comentario": "TRUE cuando la persona ha confirmado su correo con el enlace que se le envía.",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "bool"
+    },
+    {
      "nombre": "activo",
      "tipo": "boolean",
      "no_nulo": true,
@@ -410,24 +434,48 @@
      "unico": false,
      "fk": null,
      "tipo_corto": "timestamptz"
+    },
+    {
+     "nombre": "fecha_baja",
+     "tipo": "timestamp with time zone",
+     "no_nulo": false,
+     "identidad": false,
+     "por_defecto": null,
+     "comentario": "Cuándo se dio de baja. La cuenta se desactiva, no se borra (se conservan sus encargos).",
+     "pk": false,
+     "unico": false,
+     "fk": null,
+     "tipo_corto": "timestamptz"
     }
    ],
    "checks": [
+    {
+     "nombre": "ck_usuario_baja",
+     "definicion": "CHECK (((fecha_baja IS NULL) OR (NOT activo)))"
+    },
     {
      "nombre": "ck_usuario_contacto",
      "definicion": "CHECK (((password_hash IS NULL) OR (email IS NOT NULL) OR (telefono IS NOT NULL)))"
     },
     {
+     "nombre": "ck_usuario_roles",
+     "definicion": "CHECK (((cardinality(roles) >= 1) AND (roles <@ ARRAY['VECINO'::character varying(15), 'FAMILIAR'::character varying(15), 'VENDEDOR'::character varying(15), 'AYUNTAMIENTO'::character varying(15), 'ADMIN'::character varying(15)]) AND fn_sin_repetidos((roles)::text[])))"
+    },
+    {
      "nombre": "ck_usuario_sin_cuenta",
-     "definicion": "CHECK (((password_hash IS NOT NULL) OR ((rol)::text = 'VECINO'::text)))"
+     "definicion": "CHECK (((password_hash IS NOT NULL) OR (roles = ARRAY['VECINO'::character varying(15)])))"
     },
     {
      "nombre": "ck_usuario_vecino",
-     "definicion": "CHECK ((((rol)::text <> 'VECINO'::text) OR (municipio_id IS NOT NULL)))"
+     "definicion": "CHECK (((NOT ('VECINO'::text = ANY ((roles)::text[]))) OR (municipio_id IS NOT NULL)))"
     },
     {
      "nombre": "ck_usuario_vendedor",
-     "definicion": "CHECK ((((rol)::text <> 'VENDEDOR'::text) OR ((nombre_comercial IS NOT NULL) AND (categoria IS NOT NULL) AND (dias_reparto IS NOT NULL) AND (hora_salida IS NOT NULL))))"
+     "definicion": "CHECK (((NOT ('VENDEDOR'::text = ANY ((roles)::text[]))) OR ((nombre_comercial IS NOT NULL) AND (categoria IS NOT NULL) AND (dias_reparto IS NOT NULL) AND (hora_salida IS NOT NULL))))"
+    },
+    {
+     "nombre": "ck_usuario_verificado",
+     "definicion": "CHECK (((email IS NOT NULL) OR (NOT email_verificado)))"
     },
     {
      "nombre": "usuario_categoria_check",
@@ -446,8 +494,8 @@
      "definicion": "CHECK (((horas_antelacion_encargo >= 0) AND (horas_antelacion_encargo <= 72)))"
     },
     {
-     "nombre": "usuario_rol_check",
-     "definicion": "CHECK (((rol)::text = ANY ((ARRAY['VECINO'::character varying, 'FAMILIAR'::character varying, 'VENDEDOR'::character varying, 'AYUNTAMIENTO'::character varying, 'ADMIN'::character varying])::text[])))"
+     "nombre": "usuario_idioma_check",
+     "definicion": "CHECK (((idioma)::text ~ '^[a-z]{2}(-[A-Z]{2})?$'::text))"
     },
     {
      "nombre": "usuario_tamano_texto_check",
@@ -455,7 +503,7 @@
     }
    ],
    "unicos_compuestos": null,
-   "filas_demo": 12,
+   "filas_demo": 13,
    "bloque": "personas"
   },
   {
@@ -917,7 +965,7 @@
     }
    ],
    "unicos_compuestos": null,
-   "filas_demo": 8,
+   "filas_demo": 9,
    "bloque": "vendedores"
   },
   {
@@ -1861,11 +1909,11 @@
  ],
  "resumen": {
   "tablas": 10,
-  "columnas": 104,
+  "columnas": 107,
   "relaciones": 17,
   "vistas": 5,
   "triggers": 1,
-  "indices": 26,
-  "checks": 37
+  "indices": 27,
+  "checks": 40
  }
 }

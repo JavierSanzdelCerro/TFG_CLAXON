@@ -8,8 +8,9 @@
 --   Ayuntamiento ............ consulta, aviso
 --
 --  Ideas clave:
---   · Todas las personas están en «usuario» (vecino, familiar, vendedor,
---     ayuntamiento, admin). Un vecino sin móvil es un usuario sin contraseña
+--   · Todas las personas están en «usuario». Una misma persona (mismo teléfono
+--     y contraseña) puede tener varios roles a la vez: vecino y familiar,
+--     vendedor y vecino... Un vecino sin móvil es un usuario sin contraseña
 --     que gestiona un familiar.
 --   · La ruta del vendedor son sus paradas. Cada parada guarda además cómo va
 --     HOY (hora estimada, llegada, estado): no hace falta otra tabla por día.
@@ -51,10 +52,14 @@ COMMENT ON TABLE  municipio                   IS 'Pueblos donde funciona Claxon.
 COMMENT ON COLUMN municipio.gestor_id         IS 'Persona del ayuntamiento que publica los avisos. Una secretaria puede llevar varios pueblos.';
 COMMENT ON COLUMN municipio.tablon_token_hash IS 'SHA-256 del enlace secreto del tablón del bar. NULL si el pueblo no tiene tablón.';
 
+-- ¿Una lista sin elementos repetidos? (se usa en el CHECK de los roles)
+CREATE FUNCTION fn_sin_repetidos(lista TEXT[]) RETURNS BOOLEAN LANGUAGE sql IMMUTABLE AS $$
+    SELECT cardinality(lista) = (SELECT count(DISTINCT x) FROM unnest(lista) AS x)
+$$;
+
 CREATE TABLE usuario (
     id                        BIGINT        GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    rol                       VARCHAR(15)   NOT NULL
-                              CHECK (rol IN ('VECINO', 'FAMILIAR', 'VENDEDOR', 'AYUNTAMIENTO', 'ADMIN')),
+    roles                     VARCHAR(15)[] NOT NULL DEFAULT ARRAY['VECINO']::VARCHAR(15)[],
     nombre                    VARCHAR(80)   NOT NULL,
     apellidos                 VARCHAR(120),
     email                     VARCHAR(150)  UNIQUE CHECK (email = lower(email)),
@@ -67,6 +72,7 @@ CREATE TABLE usuario (
     notas_entrega             VARCHAR(300),
     codigo_familia            CHAR(6)       UNIQUE,
     -- Preferencias y móvil
+    idioma                    VARCHAR(5)    NOT NULL DEFAULT 'es' CHECK (idioma ~ '^[a-z]{2}(-[A-Z]{2})?$'),
     tamano_texto              VARCHAR(12)   NOT NULL DEFAULT 'GRANDE'
                               CHECK (tamano_texto IN ('NORMAL', 'GRANDE', 'MUY_GRANDE')),
     alto_contraste            BOOLEAN       NOT NULL DEFAULT FALSE,
@@ -80,17 +86,28 @@ CREATE TABLE usuario (
     acepta_encargos           BOOLEAN       NOT NULL DEFAULT TRUE,
     horas_antelacion_encargo  SMALLINT      NOT NULL DEFAULT 12 CHECK (horas_antelacion_encargo BETWEEN 0 AND 72),
     -- Control
+    email_verificado          BOOLEAN       NOT NULL DEFAULT FALSE,
     activo                    BOOLEAN       NOT NULL DEFAULT TRUE,
     fecha_alta                TIMESTAMPTZ   NOT NULL DEFAULT now(),
     ultimo_acceso             TIMESTAMPTZ,
+    fecha_baja                TIMESTAMPTZ,
 
+    CONSTRAINT ck_usuario_roles      CHECK (cardinality(roles) >= 1
+                                            AND roles <@ ARRAY['VECINO', 'FAMILIAR', 'VENDEDOR', 'AYUNTAMIENTO', 'ADMIN']::VARCHAR(15)[]
+                                            AND fn_sin_repetidos(roles::TEXT[])),
     CONSTRAINT ck_usuario_contacto   CHECK (password_hash IS NULL OR email IS NOT NULL OR telefono IS NOT NULL),
-    CONSTRAINT ck_usuario_sin_cuenta CHECK (password_hash IS NOT NULL OR rol = 'VECINO'),
-    CONSTRAINT ck_usuario_vecino     CHECK (rol <> 'VECINO' OR municipio_id IS NOT NULL),
-    CONSTRAINT ck_usuario_vendedor   CHECK (rol <> 'VENDEDOR' OR (nombre_comercial IS NOT NULL AND categoria IS NOT NULL
-                                                                 AND dias_reparto IS NOT NULL AND hora_salida IS NOT NULL))
+    CONSTRAINT ck_usuario_sin_cuenta CHECK (password_hash IS NOT NULL OR roles = ARRAY['VECINO']::VARCHAR(15)[]),
+    CONSTRAINT ck_usuario_vecino     CHECK (NOT 'VECINO' = ANY (roles) OR municipio_id IS NOT NULL),
+    CONSTRAINT ck_usuario_vendedor   CHECK (NOT 'VENDEDOR' = ANY (roles) OR (nombre_comercial IS NOT NULL AND categoria IS NOT NULL
+                                                                         AND dias_reparto IS NOT NULL AND hora_salida IS NOT NULL)),
+    CONSTRAINT ck_usuario_verificado CHECK (email IS NOT NULL OR NOT email_verificado),
+    CONSTRAINT ck_usuario_baja       CHECK (fecha_baja IS NULL OR NOT activo)
 );
 COMMENT ON TABLE  usuario                IS 'Todas las personas: vecinos, familiares, vendedores, ayuntamiento y administración.';
+COMMENT ON COLUMN usuario.roles          IS 'Uno o varios roles de la misma persona: VECINO, FAMILIAR, VENDEDOR, AYUNTAMIENTO, ADMIN.';
+COMMENT ON COLUMN usuario.idioma         IS 'Idioma de la app (código ISO: es, ca, en...).';
+COMMENT ON COLUMN usuario.email_verificado IS 'TRUE cuando la persona ha confirmado su correo con el enlace que se le envía.';
+COMMENT ON COLUMN usuario.fecha_baja     IS 'Cuándo se dio de baja. La cuenta se desactiva, no se borra (se conservan sus encargos).';
 COMMENT ON COLUMN usuario.password_hash  IS 'Hash BCrypt. NULL = vecino sin móvil que gestiona un familiar (no puede entrar).';
 COMMENT ON COLUMN usuario.municipio_id   IS 'Vecino: dónde vive. Vendedor: desde dónde sale.';
 COMMENT ON COLUMN usuario.codigo_familia IS 'Código de 6 caracteres que el vecino da a un familiar para vincularse.';
@@ -261,6 +278,7 @@ COMMENT ON COLUMN aviso.push_enviado IS 'Cuándo se mandó la notificación. Si 
 -- =============================================================================
 
 CREATE INDEX ix_usuario_municipio  ON usuario (municipio_id);
+CREATE INDEX ix_usuario_roles      ON usuario USING gin (roles);   -- WHERE roles @> ARRAY['VENDEDOR']
 CREATE INDEX ix_familiar_vecino    ON familiar (vecino_id);
 CREATE INDEX ix_parada_municipio   ON parada (municipio_id, fecha);
 CREATE INDEX ix_suscripcion_vend   ON suscripcion (vendedor_id);

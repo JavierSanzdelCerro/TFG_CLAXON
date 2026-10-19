@@ -1,6 +1,6 @@
 # Base de datos de Claxon
 
-PostgreSQL 16 · **10 tablas** · 5 vistas · 1 trigger · 31 pruebas automáticas.
+PostgreSQL 16 · **10 tablas** · 5 vistas · 1 trigger · 43 pruebas automáticas.
 
 ![Diagrama entidad-relación de Claxon](diagrama-er.png)
 
@@ -48,7 +48,7 @@ Contraseña de todos: **`Claxon2026!`**
 | Quién | Entra con | Rol | Para probar |
 |---|---|---|---|
 | María Pérez | `600111222` | Vecina de Fuenferrada | «Hoy», encargo preparado, cambio de consulta |
-| Manuel Sanz | `manuel.sanz@demo.claxon` | Vecino de Fuenferrada | Encargo sin aceptar |
+| Manuel Sanz | `600333444` o `manuel.sanz@demo.claxon` | **Vecino y familiar** (una sola cuenta) | Encargo sin aceptar; ha pedido ayudar a su prima Carmen. Correo sin verificar |
 | Carmen López | `carmen.lopez@demo.claxon` | Vecina de Segura de los Baños | Aviso del pescado 30 min antes |
 | Teresa Aznar | `600777888` | Vecina de Martín del Río | Encargo de fruta para el martes |
 | Joaquín Pérez | — (no tiene móvil) | Vecino de La Hoz de la Vieja | Lo gestiona Laura |
@@ -57,14 +57,24 @@ Contraseña de todos: **`Claxon2026!`**
 | Antonio Gil | `pescados.gil@demo.claxon` | Vendedor (Pescados Gil) | Ruta prevista para las 11:30 |
 | Pilar Royo | `frutas.pilar@demo.claxon` | Vendedora (Frutas Pilar) | Hoy no reparte |
 | Ana Martín | `secretaria@demo.claxon` | Ayuntamiento de 3 pueblos | Avisos y consulta |
-| Luis Navarro | `alcaldia.mdr@demo.claxon` | Ayuntamiento de Martín del Río | Aviso de fiestas |
+| Luis Navarro | `alcaldia.mdr@demo.claxon` | **Ayuntamiento y vecino** de Martín del Río | Publica avisos y recibe el aviso del pan |
+| Rosario Gómez | `600999000` | Vecina de Segura (dada de baja) | Cuenta desactivada: no puede entrar |
 | Equipo Claxon | `admin@claxon.app` | Administración | Resumen del piloto |
 
 «Hoy» siempre es el día en que se cargan los datos: el pan va de camino a Fuenferrada (10:40), el pescado está previsto a las 12:15 y la consulta de Fuenferrada se pasa en Utrillas.
 
 ## Cómo se hace cada cosa con 10 tablas
 
-**Todas las personas en `usuario`.** La columna `rol` dice quién es. Los datos del vendedor (`nombre_comercial`, `categoria`, `dias_reparto`, `hora_salida`) solo se rellenan si `rol = 'VENDEDOR'`; una regla CHECK lo obliga. Así no hacen falta tablas aparte de vecinos, vendedores y roles.
+**Todas las personas en `usuario`, con uno o varios roles.** La columna `roles` es una lista (`VARCHAR(15)[]`): Manuel tiene `{VECINO,FAMILIAR}` y Luis `{AYUNTAMIENTO,VECINO}`. Es **una sola cuenta**, con el mismo teléfono y la misma contraseña: al entrar, la app le enseña lo de cada rol. Las reglas CHECK obligan a que:
+
+- haya al menos un rol, sin repetir y de los cinco permitidos;
+- quien tenga el rol VECINO tenga pueblo;
+- quien tenga el rol VENDEDOR tenga nombre comercial, categoría, días y hora de salida;
+- solo pueda no tener contraseña quien sea únicamente vecino (el que gestiona un familiar).
+
+Para buscar por rol: `WHERE roles @> '{VENDEDOR}'` (hay un índice GIN para que sea rápido). En Spring Boot se mapea con `@JdbcTypeCode(SqlTypes.ARRAY) private Set<Rol> roles;` y Spring Security da a la persona un `ROLE_` por cada uno.
+
+**Cuenta completa.** También se guarda el idioma de la app (`idioma`, por ejemplo `es` o `ca`), si el correo está confirmado (`email_verificado`) y cuándo se dio de baja (`fecha_baja`). Una cuenta dada de baja no se borra: queda con `activo = FALSE` para conservar sus encargos.
 
 **Vecino sin móvil.** Es un `usuario` con `password_hash` vacío: no puede entrar, pero existe, tiene dirección y encargos. Su familiar lo gestiona y recibe sus avisos. Solo un VECINO puede no tener contraseña.
 
@@ -97,7 +107,7 @@ Contraseña de todos: **`Claxon2026!`**
 | Antes (31 tablas) | Ahora | Lo que se pierde |
 |---|---|---|
 | `provincia`, `comarca` | Columnas de `municipio` | Nada para el piloto. |
-| `rol`, `usuario_rol` | Columna `usuario.rol` | Una persona no puede tener dos roles a la vez (por ejemplo, vendedor y vecino). |
+| `rol`, `usuario_rol` | Columna `usuario.roles` (lista) | Nada: una persona puede tener varios roles con la misma cuenta. |
 | `vecino`, `vendedor`, `vendedor_categoria`, `categoria_servicio` | Columnas de `usuario` | Un vendedor tiene una sola categoría. |
 | `dispositivo`, `token_refresco` | `usuario.token_push`; sesión con JWT sin guardar | Un solo móvil por persona. |
 | `ruta`, `ruta_dia`, `jornada`, `paso_parada` | `parada` + días y hora en el vendedor | Una ruta por vendedor; no se guarda el histórico de horas de días pasados. |

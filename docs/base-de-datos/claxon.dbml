@@ -20,7 +20,7 @@ Table municipio {
 
 Table usuario {
   id bigint [pk, increment]
-  rol varchar(15) [not null]
+  roles "varchar(15)[]" [not null, default: `ARRAY['VECINO'::character varying(15)]`, note: 'Uno o varios roles de la misma persona: VECINO, FAMILIAR, VENDEDOR, AYUNTAMIENTO, ADMIN.']
   nombre varchar(80) [not null]
   apellidos varchar(120)
   email varchar(150) [unique]
@@ -31,6 +31,7 @@ Table usuario {
   necesita_ayuda_entrega bool [not null, default: `false`]
   notas_entrega varchar(300)
   codigo_familia char(6) [unique, note: 'Código de 6 caracteres que el vecino da a un familiar para vincularse.']
+  idioma varchar(5) [not null, default: `'es'::character varying`, note: 'Idioma de la app (código ISO: es, ca, en...).']
   tamano_texto varchar(12) [not null, default: `'GRANDE'::character varying`]
   alto_contraste bool [not null, default: `false`]
   token_push varchar(255) [note: 'Token de Firebase Cloud Messaging del móvil.']
@@ -40,9 +41,11 @@ Table usuario {
   hora_salida time_without_time_zone [note: 'Hora habitual a la que sale el vendedor.']
   acepta_encargos bool [not null, default: `true`]
   horas_antelacion_encargo smallint [not null, default: `12`]
+  email_verificado bool [not null, default: `false`, note: 'TRUE cuando la persona ha confirmado su correo con el enlace que se le envía.']
   activo bool [not null, default: `true`]
   fecha_alta timestamp_with_time_zone [not null, default: `now()`]
   ultimo_acceso timestamp_with_time_zone
+  fecha_baja timestamp_with_time_zone [note: 'Cuándo se dio de baja. La cuenta se desactiva, no se borra (se conservan sus encargos).']
   Note: 'Todas las personas: vecinos, familiares, vendedores, ayuntamiento y administración.'
 }
 

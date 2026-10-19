@@ -33,7 +33,7 @@ Además hay un **tablón web** para la tele del bar o del local social, pensado 
 ├── database/                 Base de datos: esquema, datos demo y pruebas
 │   ├── 01_esquema.sql        10 tablas, índices y vistas
 │   ├── 02_datos_demo.sql     Pueblos de las Cuencas Mineras, rutas, encargos...
-│   ├── 03_pruebas.sql        31 pruebas de integridad
+│   ├── 03_pruebas.sql        43 pruebas de integridad
 │   └── herramientas/         Genera los diagramas desde la base de datos real
 ├── docs/
 │   ├── base-de-datos/        Diagrama entidad-relación (interactivo, PNG, Mermaid, DBML) y decisiones de diseño

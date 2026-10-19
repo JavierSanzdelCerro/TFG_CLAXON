@@ -27,30 +27,39 @@ INSERT INTO municipio (id, nombre, comarca) OVERRIDING SYSTEM VALUE VALUES
 
 -- Usuarios -------------------------------------------------------------------
 -- Hash BCrypt (coste 10) de «Claxon2026!»
-INSERT INTO usuario (id, rol, nombre, apellidos, email, telefono, password_hash, municipio_id, direccion,
+INSERT INTO usuario (id, roles, nombre, apellidos, email, telefono, password_hash, municipio_id, direccion,
                      necesita_ayuda_entrega, notas_entrega, codigo_familia, tamano_texto, token_push, ultimo_acceso)
 OVERRIDING SYSTEM VALUE VALUES
-    ( 1, 'ADMIN',        'Equipo',  'Claxon',         'admin@claxon.app',          NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '2 hours'),
-    ( 2, 'VECINO',       'María',   'Pérez Gascón',   NULL,                        '600111222', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 2, 'C/ Mayor, 12', FALSE, NULL, '8F3K2P', 'MUY_GRANDE', 'demo-fcm-maria', now() - interval '20 minutes'),
-    ( 3, 'VECINO',       'Manuel',  'Sanz Royo',      'manuel.sanz@demo.claxon',   '600333444', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 2, 'C/ Iglesia, 3', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-manuel', now() - interval '1 day'),
-    ( 4, 'VECINO',       'Carmen',  'López Navarro',  'carmen.lopez@demo.claxon',  '600555666', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 3, 'Pl. de la Iglesia, 1', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-carmen', now() - interval '3 hours'),
-    ( 5, 'FAMILIAR',     'Laura',   'Pérez Martín',   'laura.perez@demo.claxon',   '611222333', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', 'demo-fcm-laura', now() - interval '35 minutes'),
-    ( 9, 'AYUNTAMIENTO', 'Ana',     'Martín Blasco',  'secretaria@demo.claxon',    NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '50 minutes'),
-    (10, 'AYUNTAMIENTO', 'Luis',    'Navarro Gracia', 'alcaldia.mdr@demo.claxon',  NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 1, NULL, FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '4 days'),
-    (11, 'VECINO',       'Teresa',  'Aznar Lahoz',    NULL,                        '600777888', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 1, 'C/ San Roque, 8', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-teresa', now() - interval '6 hours'),
+    ( 1, '{ADMIN}',        'Equipo',  'Claxon',         'admin@claxon.app',          NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '2 hours'),
+    ( 2, '{VECINO}',       'María',   'Pérez Gascón',   NULL,                        '600111222', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 2, 'C/ Mayor, 12', FALSE, NULL, '8F3K2P', 'MUY_GRANDE', 'demo-fcm-maria', now() - interval '20 minutes'),
+    ( 3, '{VECINO,FAMILIAR}',       'Manuel',  'Sanz Royo',      'manuel.sanz@demo.claxon',   '600333444', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 2, 'C/ Iglesia, 3', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-manuel', now() - interval '1 day'),
+    ( 4, '{VECINO}',       'Carmen',  'López Navarro',  'carmen.lopez@demo.claxon',  '600555666', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 3, 'Pl. de la Iglesia, 1', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-carmen', now() - interval '3 hours'),
+    ( 5, '{FAMILIAR}',     'Laura',   'Pérez Martín',   'laura.perez@demo.claxon',   '611222333', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', 'demo-fcm-laura', now() - interval '35 minutes'),
+    ( 9, '{AYUNTAMIENTO}', 'Ana',     'Martín Blasco',  'secretaria@demo.claxon',    NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', NULL, NULL, FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '50 minutes'),
+    (10, '{AYUNTAMIENTO,VECINO}', 'Luis',    'Navarro Gracia', 'alcaldia.mdr@demo.claxon',  NULL,        '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 1, 'Pl. Mayor, 2', FALSE, NULL, NULL, 'NORMAL', NULL, now() - interval '4 days'),
+    (11, '{VECINO}',       'Teresa',  'Aznar Lahoz',    NULL,                        '600777888', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 1, 'C/ San Roque, 8', FALSE, NULL, NULL, 'GRANDE', 'demo-fcm-teresa', now() - interval '6 hours'),
     -- Joaquín no tiene móvil: sin contraseña, lo gestiona su sobrina Laura
-    (12, 'VECINO',       'Joaquín', 'Pérez Gascón',   NULL,                        '978000111', NULL, 4, 'C/ del Horno, 5', TRUE, 'Llamar fuerte a la puerta: tarda en abrir.', NULL, 'GRANDE', NULL, NULL);
+    (12, '{VECINO}',       'Joaquín', 'Pérez Gascón',   NULL,                        '978000111', NULL, 4, 'C/ del Horno, 5', TRUE, 'Llamar fuerte a la puerta: tarda en abrir.', NULL, 'GRANDE', NULL, NULL);
+
+-- Una vecina que se dio de baja: la cuenta se desactiva, no se borra
+INSERT INTO usuario (id, roles, nombre, apellidos, telefono, password_hash, municipio_id, idioma, activo, fecha_baja, fecha_alta)
+OVERRIDING SYSTEM VALUE VALUES
+    (13, '{VECINO}', 'Rosario', 'Gómez Lázaro', '600999000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 3, 'es', FALSE, now() - interval '10 days', now() - interval '80 days');
 
 -- Vendedores: la ruta (días y hora de salida) va en su propio usuario
-INSERT INTO usuario (id, rol, nombre, apellidos, email, telefono, password_hash, municipio_id,
+INSERT INTO usuario (id, roles, nombre, apellidos, email, telefono, password_hash, municipio_id,
                      nombre_comercial, categoria, dias_reparto, hora_salida, horas_antelacion_encargo, token_push, ultimo_acceso)
 OVERRIDING SYSTEM VALUE VALUES
-    (6, 'VENDEDOR', 'Jorge',   'Lázaro Ibáñez', 'horno.sanjorge@demo.claxon', '622111000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
+    (6, '{VENDEDOR}', 'Jorge',   'Lázaro Ibáñez', 'horno.sanjorge@demo.claxon', '622111000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
         'Horno San Jorge',         'PAN',     'LMXJVS', '09:45', 12, 'demo-fcm-jorge',   now() - interval '5 minutes'),
-    (7, 'VENDEDOR', 'Antonio', 'Gil Sebastián', 'pescados.gil@demo.claxon',   '622333000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
+    (7, '{VENDEDOR}', 'Antonio', 'Gil Sebastián', 'pescados.gil@demo.claxon',   '622333000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
         'Pescados Gil',            'PESCADO', 'LXV',    '11:30', 24, 'demo-fcm-antonio', now() - interval '1 hour'),
-    (8, 'VENDEDOR', 'Pilar',   'Royo Alcalá',   'frutas.pilar@demo.claxon',   '622555000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
+    (8, '{VENDEDOR}', 'Pilar',   'Royo Alcalá',   'frutas.pilar@demo.claxon',   '622555000', '$2a$10$pZWCp9McrKgkICxHqs2utetNRCU8CebHSQ/jvNMKZOOpKt.k88A2.', 5,
         'Frutas y Verduras Pilar', 'FRUTA',   'MJ',     '09:00', 24, NULL,               now() - interval '2 days');
+
+-- Correos confirmados (Manuel aún no ha pulsado el enlace) y un usuario con la app en catalán
+UPDATE usuario SET email_verificado = TRUE WHERE email IS NOT NULL AND id <> 3;
+UPDATE usuario SET idioma = 'ca' WHERE id = 7;
 
 -- Ana lleva tres ayuntamientos; Luis, el suyo. Tablones en tres pueblos.
 UPDATE municipio SET gestor_id = 9  WHERE id IN (2, 3, 4);
@@ -112,7 +121,8 @@ INSERT INTO suscripcion (vecino_id, vendedor_id, minutos_antelacion, ultimo_avis
     ( 4, 7, 30, NULL),
     (12, 6, 20, NULL),
     (11, 6, 15, NULL),
-    (11, 8, 15, NULL);
+    (11, 8, 15, NULL),
+    (10, 6, 15, NULL);                -- Luis, el alcalde, también es vecino y quiere aviso del pan
 
 -- Encargos (el vendedor es el de la parada) ------------------------------------
 INSERT INTO encargo (id, vecino_id, parada_id, fecha_entrega, estado, creado_por_id, a_domicilio, notas, motivo_rechazo,
