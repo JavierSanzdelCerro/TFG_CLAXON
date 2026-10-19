@@ -139,6 +139,7 @@ def indice_markdown(contenido: str) -> str:
     """README de docs/interfaces con una miniatura y la explicación de cada pantalla."""
     lineas = ["# Interfaces de Claxon", "",
               "> Generado por `fuente/construir.py`. Para cambiar una pantalla, edita `fuente/pantallas/*.html` y vuelve a construir.", "",
+              "**[Descargar el PDF](interfaces-claxon.pdf)** (16 páginas, A4 apaisado) · "
               "**[Abrir el catálogo completo](interfaces-claxon.html)** (descárgalo y ábrelo con doble clic) · "
               "las imágenes sueltas están en [`png/`](png/).", "",
               "Datos de ejemplo iguales a los de la base de datos demo: lunes 19 de octubre, 10:25. "
@@ -175,7 +176,7 @@ def indice_markdown(contenido: str) -> str:
             lineas += ["</table>", ""]
     lineas += ["## Regenerar", "", "```bash", "cd docs/interfaces/fuente",
                "npm install                 # iconos Lucide y Playwright", "python3 construir.py        # → interfaces-claxon.html y este README",
-               "npx playwright install chromium   # solo la primera vez", "node capturar.js            # → png/", "```", ""]
+               "npx playwright install chromium   # solo la primera vez", "node capturar.js            # → png/", "node generar_pdf.js         # → interfaces-claxon.pdf", "```", ""]
     return "\n".join(lineas)
 
 

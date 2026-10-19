@@ -17,6 +17,8 @@ try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require(
   page.on('console', m => m.type() === 'error' && errores.push(m.text()));
   await page.goto('file://' + catalogo, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
+  // Fondo transparente: las esquinas redondeadas de los móviles quedan limpias sobre cualquier color
+  await page.addStyleTag({ content: 'html, body { background: transparent !important; }' });
   const figuras = await page.$$('figure.pantalla[data-png]');
   let n = 0;
   for (const fig of figuras) {
