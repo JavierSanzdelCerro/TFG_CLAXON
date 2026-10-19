@@ -1,36 +1,30 @@
-# Anuncios de Claxon
+# Vídeos de Claxon
 
-Un vídeo de unos 30 segundos por cada perfil de la app, en estilo anuncio: 1920×1080, 30 fps, con música.
+Un vídeo por perfil, grabado **como si fuera la pantalla del móvil (o del ordenador) de una persona usando la app**: se ven los toques, las pantallas cambiando, el texto escribiéndose, los contadores, las notificaciones que llegan… Con música suave y los sonidos de la app (toques, teclado, avisos y el claxon).
 
-| Perfil | Vídeo | Qué cuenta |
-|---|---|---|
-| Vecino | [claxon-vecino.mp4](claxon-vecino.mp4) | Avisos 15 minutos antes, la pantalla «Hoy», encargos, cambios de consulta y letra grande. |
-| Familiar | [claxon-familiar.mp4](claxon-familiar.mp4) | Seguir a la familia desde fuera, gestionar a quien no tiene móvil, encargar por ellos y vincularse con un código. |
-| Vendedor | [claxon-vendedor.mp4](claxon-vendedor.mp4) | «Iniciar ruta», avisos automáticos a los clientes, retrasos con un toque y los encargos de cada parada. |
-| Ayuntamiento | [claxon-ayuntamiento.mp4](claxon-ayuntamiento.mp4) | Panel web, avisos al móvil y al bar, cambios de consulta y el tablón del bar. |
+| Perfil | Vídeo | Formato | Qué hace la persona |
+|---|---|---|---|
+| Vecino | [claxon-vecino.mp4](claxon-vecino.mp4) | Móvil vertical | María recibe el aviso del pan, mira «Hoy», encarga pan con una nota, el horno lo acepta, consulta el cambio del médico y le avisan de que el panadero ya está en la plaza. |
+| Familiar | [claxon-familiar.mp4](claxon-familiar.mp4) | Móvil vertical | Laura recibe el aviso de su madre, encarga pan para su tío Joaquín (sin móvil) para que se lo lleven a casa y se vincula con otro familiar con un código. |
+| Vendedor | [claxon-vendedor.mp4](claxon-vendedor.mp4) | Móvil vertical | Jorge inicia la ruta, avisa de 10 minutos de retraso, acepta encargos, llega a la plaza, entrega y marca las magdalenas como agotadas. |
+| Ayuntamiento | [claxon-ayuntamiento.mp4](claxon-ayuntamiento.mp4) | Ordenador (16:10) | Ana registra que la consulta se pasa en Utrillas, escribe un aviso nuevo y lo ve aparecer en el tablón del bar. |
 
-<img src="poster-vecino.jpg" width="49%" alt="Anuncio del vecino"> <img src="poster-familiar.jpg" width="49%" alt="Anuncio del familiar">
-<img src="poster-vendedor.jpg" width="49%" alt="Anuncio del vendedor"> <img src="poster-ayuntamiento.jpg" width="49%" alt="Anuncio del ayuntamiento">
-
-Todos siguen la misma estructura: **gancho** (el problema en una frase, con el sonido del claxon) → **dato** de la presentación (vecino y ayuntamiento) → **4 o 5 escenas** con las pantallas reales de la app → **cierre** con el logo.
+Los móviles se graban a 1170×2532 (como una grabación de pantalla de iPhone) y el ordenador a 1920×1200, a 30 fps.
 
 ## Cómo se hacen
 
-Los vídeos no se editan a mano: se generan a partir del guion.
-
 | Archivo | Qué hace |
 |---|---|
-| `fuente/guiones.js` | El guion de cada anuncio: frases, pantallas y qué se resalta o se pulsa en cada una. |
-| `fuente/videos.js` | Monta cada anuncio como página animada y la graba fotograma a fotograma con Playwright y ffmpeg. |
-| `fuente/musica.py` | Compone la música (marimba, bajo y percusión) y el claxon con numpy, ajustada a la duración de cada vídeo. |
-
-Para cambiar un texto o una pantalla, edita `guiones.js` y vuelve a generar:
+| `fuente/grabaciones/<perfil>.js` | El guion: qué toca la persona y en qué segundo. |
+| `fuente/grabaciones/motor.js` | Simula a la persona: toques, ratón, escribir, cambiar de pantalla, notificaciones… |
+| `fuente/grabar.js` | Monta la app con el HTML real de las pantallas y graba fotograma a fotograma (Playwright + ffmpeg). |
+| `fuente/grabaciones/sonido.py` y `fuente/musica.py` | Música y efectos de sonido generados con numpy. |
 
 ```bash
 cd docs/videos/fuente
-node videos.js                    # los cuatro (unos 2–3 minutos cada uno)
-node videos.js vendedor           # solo uno
-node videos.js vecino --previa    # fotogramas sueltos para revisar, sin grabar
+node grabar.js                    # los cuatro
+node grabar.js vecino             # solo uno
+node grabar.js vecino --previa    # fotogramas cada 1,5 s para revisar, sin grabar
 ```
 
-Necesita Node con Playwright, ffmpeg, Python con numpy y las capturas de `docs/interfaces/png` (si cambian las pantallas, primero `node docs/interfaces/fuente/capturar.js`).
+Necesita Node con Playwright, ffmpeg, Python con numpy y el catálogo de interfaces construido (`docs/interfaces/interfaces-claxon.html`).

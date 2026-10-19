@@ -37,3 +37,4 @@ GoogleService-Info.plist
 
 # Archivos temporales de los vídeos
 docs/videos/fuente/.tmp/
+__pycache__/
