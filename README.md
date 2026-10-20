@@ -37,6 +37,7 @@ Además hay un **tablón web** para la tele del bar o del local social, pensado 
 │   └── herramientas/         Genera los diagramas desde la base de datos real
 ├── docs/
 │   ├── base-de-datos/        Diagrama entidad-relación (interactivo, PNG, Mermaid, DBML) y decisiones de diseño
+│   ├── demo/                 Demo navegable: la app funcionando en el navegador
 │   ├── interfaces/           34 pantallas con datos demo (catálogo HTML, PNG y PDF)
 │   └── videos/               Un anuncio en vídeo por perfil
 ├── docker-compose.yml        PostgreSQL + Adminer
@@ -57,6 +58,7 @@ docker compose up -d
 
 ## Documentación
 
+- **[Demo navegable](docs/demo/README.md)**: la app funcionando en el navegador, con usuarios de prueba.
 - **[Base de datos](docs/base-de-datos/README.md)**: diagrama, los 8 bloques y por qué está diseñada así.
 - **[Interfaces](docs/interfaces/README.md)**: todas las pantallas, perfil por perfil.
 - **[Anuncios en vídeo](docs/videos/README.md)**: un vídeo de 30 segundos por perfil.
